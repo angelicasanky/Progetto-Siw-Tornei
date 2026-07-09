@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Dettaglio Torneo</title>
+
+</head>
+<body>
+	<h1 th:text="${torneo.nome}">Nome del torneo</h1>
+
+	<div>
+		<p>
+			<strong>Anno di svolgimento:</strong> <span th:text="${torneo.anno}">2026</span>
+		</p>
+		<p>
+			<strong>Descrizione:</strong>
+		</p>
+		<p th:text="${torneo.descrizione}">Qui la descrizione del
+			torneo...</p>
+	</div>
+	
+	<div>
+		<a th:href="@{'/admin/torneo/delete' + ${torneo.id}}">Elimina torneo</a>
+	
+	</div>
+
+	<br>
+	<a href="/tornei">Torna all'elenco del tornei</a>
+
+
+</body>
+</html>

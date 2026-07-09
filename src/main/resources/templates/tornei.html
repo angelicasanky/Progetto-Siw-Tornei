@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"> 
+<head>
+
+	<meta charset="UTF-8">
+	<title>Elenco Tornei</title>
+
+</head>
+<body>
+	
+	<h1>Tutti i Tornei</h1>
+
+	<ul>
+	
+		<li th:each="torneo : ${elencoTornei}">
+		
+		<a th:href="@{'/torneo/' + ${torneo.id}}" th:text="${torneo.nome}">Nome del torneo</a> -
+		<span th:text="${torneo.anno}">2026</span>
+		</li>
+	</ul>
+
+</body>
+
+</html>
