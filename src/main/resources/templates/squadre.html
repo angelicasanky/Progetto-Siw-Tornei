@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Elenco Squadre</title>
+</head>
+<body>
+
+	<h1>Tutte le Squadre</h1>
+
+	<a th:href="@{/admin/squadra/nuova}">Nuova squadra</a>
+
+	<ul>
+		<li th:each="squadra : ${elencoSquadre}">
+		<a th:href="@{'/squadra/' + ${squadra.id}}" th:text="${squadra.nome}">Nome squadra</a>
+		<span th:text="${squadra.citta}">Città</span>
+		</li>
+	</ul>
+
+	<br>
+	<a href="/tornei">Torna ai tornei</a>
+
+</body>
+
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dettaglio Giocatore</title>
+</head>
+
+<body>
+
+    <h1 th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</h1>
+
+    <p><strong>Data di nascita:</strong> <span th:text="${giocatore.dataDiNascita}"></span></p>
+    <p><strong>Ruolo:</strong> <span th:text="${giocatore.ruolo}"></span></p>
+    <p><strong>Altezza:</strong> <span th:text="${giocatore.altezza}"></span> cm</p>
+    <p><strong>Squadra:</strong>
+        <a th:if="${giocatore.squadra != null}" th:href="@{'/squadra/' + ${giocatore.squadra.id}}"
+            th:text="${giocatore.squadra.nome}">Nome squadra</a>
+    </p>
+
+    <div>
+        <a th:href="@{'/admin/giocatore/delete/' + ${giocatore.id}}">Elimina giocatore</a>
+    </div>
+
+    <br>
+    <a href="/giocatori">Torna all'elenco dei giocatori</a>
+
+</body>
+
+</html>

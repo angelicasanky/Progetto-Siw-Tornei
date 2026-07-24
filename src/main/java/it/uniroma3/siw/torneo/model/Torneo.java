@@ -1,9 +1,13 @@
 package it.uniroma3.siw.torneo.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 
 // @Entity comunica a JPA e Hibernate che è una tabella sul mio database
 @Entity
@@ -20,6 +24,25 @@ public class Torneo {
 	private Integer anno;
 	private String descrizione;
 	
+	//creo il collegamento tra tornei e squadra
+	@ManyToMany(mappedBy = "tornei")
+	private Set<Squadra> squadre = new HashSet<>();
+	
+	
+	/**
+	 * @return the squadre
+	 */
+	public Set<Squadra> getSquadre() {
+		return squadre;
+	}
+
+	/**
+	 * @param squadre the squadre to set
+	 */
+	public void setSquadre(Set<Squadra> squadre) {
+		this.squadre = squadre;
+	}
+
 	/*Costruttore vuoto. Quando l'applicazione legge i dati dal database, JPA ha bisogno di creare un 
 	oggetto vuoto prima di riempirlo con i dati trovati*/
 	public Torneo() {

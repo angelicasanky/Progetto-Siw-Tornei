@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Elenco Giocatori</title>
+</head>
+
+<body>
+
+    <h1>Tutti i Giocatori</h1>
+
+    <a th:href="@{/admin/giocatore/nuovo}">Nuovo giocatore</a>
+
+    <ul>
+        <li th:each="giocatore : ${elencoGiocatori}">
+            <a th:href="@{'/giocatore/' + ${giocatore.id}}"
+                th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</a> -
+            <span th:text="${giocatore.ruolo}">Ruolo</span>
+        </li>
+    </ul>
+
+    <br>
+    <a href="/squadre">Torna alle squadre</a>
+
+</body>
+
+</html>

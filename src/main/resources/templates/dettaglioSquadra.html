@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Dettaglio Squadra</title>
+</head>
+<body>
+
+	<h1 th:text="${squadra.nome}">Nome squadra</h1>
+
+	<p><strong>Anno di fondazione:</strong> <span th:text="${squadra.annoDiFondazione}"></span></p>
+	<p><strong>Città:</strong> <span th:text="${squadra.citta}"></span></p>
+
+	<p><strong>Tornei a cui partecipa:</strong></p>
+	<ul>
+		<li th:each="torneo : ${squadra.tornei}" th:text="${torneo.nome}">Nome torneo</li>
+	</ul>
+
+	<div>
+		<a th:href="@{'/admin/squadra/delete/' + ${squadra.id}}">Elimina squadra</a>
+	</div>
+
+	<br>
+	<a href="/squadre">Torna all'elenco delle squadre</a>
+
+</body>
+</html>

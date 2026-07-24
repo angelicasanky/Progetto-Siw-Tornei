@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Elenco Arbitri</title>
+</head>
+
+<body>
+
+    <h1>Tutti gli Arbitri</h1>
+
+    <a th:href="@{/admin/arbitro/nuovo}">Nuovo arbitro</a>
+
+    <ul>
+        <li th:each="arbitro : ${elencoArbitri}">
+            <a th:href="@{'/arbitro/' + ${arbitro.id}}" th:text="${arbitro.nome} + ' ' + ${arbitro.cognome}">Nome
+                Cognome</a> -
+            <span th:text="${arbitro.codiceArbitrale}">Codice</span>
+        </li>
+    </ul>
+
+    <br>
+    <a href="/tornei">Torna ai tornei</a>
+
+</body>
+
+</html>
