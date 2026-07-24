@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dettaglio Partita</title>
+</head>
+
+<body>
+
+    <h1 th:text="${partita.squadraCasa.nome} + ' vs ' + ${partita.squadraOspite.nome}">Casa vs Ospite</h1>
+
+    <p><strong>Data e ora:</strong> <span th:text="${partita.dataOra}"></span></p>
+    <p><strong>Luogo:</strong> <span th:text="${partita.luogo}"></span></p>
+    <p><strong>Stato:</strong> <span th:text="${partita.stato}"></span></p>
+    <p><strong>Risultato:</strong> <span th:text="${partita.goalsHome}"></span> - <span
+            th:text="${partita.goalsAway}"></span></p>
+    <p><strong>Torneo:</strong>
+        <a th:if="${partita.torneo != null}" th:href="@{'/torneo/' + ${partita.torneo.id}}"
+            th:text="${partita.torneo.nome}">Torneo</a>
+    </p>
+    <p><strong>Arbitro:</strong>
+        <span th:if="${partita.arbitro != null}"
+            th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}"></span>
+    </p>
+
+    <div>
+        <a th:href="@{'/admin/partita/delete/' + ${partita.id}}">Elimina partita</a>
+    </div>
+
+    <br>
+    <a href="/partite">Torna all'elenco delle partite</a>
+
+</body>
+
+</html>

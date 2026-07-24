@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nuova Partita</title>
+</head>
+
+<body>
+
+    <h1>Inserisci una nuova partita</h1>
+
+    <form th:action="@{/admin/partita}" th:object="${partita}" method="POST">
+
+        <div>
+            <label for="dataOra">Data e ora:</label>
+            <input type="datetime-local" id="dataOra" th:field="*{dataOra}" required />
+        </div>
+
+        <div>
+            <label for="luogo">Luogo:</label>
+            <input type="text" id="luogo" th:field="*{luogo}" required />
+        </div>
+
+        <div>
+            <label for="stato">Stato:</label>
+            <select id="stato" th:field="*{stato}">
+                <option value="SCHEDULED">SCHEDULED</option>
+                <option value="PLAYED">PLAYED</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="goalsHome">Gol squadra casa:</label>
+            <input type="number" id="goalsHome" th:field="*{goalsHome}" />
+        </div>
+
+        <div>
+            <label for="goalsAway">Gol squadra ospite:</label>
+            <input type="number" id="goalsAway" th:field="*{goalsAway}" />
+        </div>
+
+        <div>
+            <label for="torneoId">Torneo:</label>
+            <select id="torneoId" name="torneoId">
+                <option th:each="torneo : ${elencoTornei}" th:value="${torneo.id}" th:text="${torneo.nome}">Torneo
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="squadraCasaId">Squadra Casa:</label>
+            <select id="squadraCasaId" name="squadraCasaId">
+                <option th:each="squadra : ${elencoSquadre}" th:value="${squadra.id}" th:text="${squadra.nome}">Squadra
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="squadraOspiteId">Squadra Ospite:</label>
+            <select id="squadraOspiteId" name="squadraOspiteId">
+                <option th:each="squadra : ${elencoSquadre}" th:value="${squadra.id}" th:text="${squadra.nome}">Squadra
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="arbitroId">Arbitro:</label>
+            <select id="arbitroId" name="arbitroId">
+                <option th:each="arbitro : ${elencoArbitri}" th:value="${arbitro.id}"
+                    th:text="${arbitro.nome} + ' ' + ${arbitro.cognome}">Arbitro</option>
+            </select>
+        </div>
+
+        <div>
+            <button type="submit">Salva Partita</button>
+        </div>
+
+    </form>
+
+    <br>
+    <a href="/partite">Torna alla lista delle partite</a>
+
+</body>
+
+</html>

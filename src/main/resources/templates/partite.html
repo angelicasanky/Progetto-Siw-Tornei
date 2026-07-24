@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Elenco Partite</title>
+</head>
+
+<body>
+
+    <h1>Tutte le Partite</h1>
+
+    <a th:href="@{/admin/partita/nuova}">Nuova partita</a>
+
+    <ul>
+        <li th:each="partita : ${elencoPartite}">
+            <a th:href="@{'/partita/' + ${partita.id}}"
+                th:text="${partita.squadraCasa.nome} + ' - ' + ${partita.squadraOspite.nome}">Casa - Ospite</a> -
+            <span th:text="${partita.dataOra}">Data</span> -
+            <span th:text="${partita.stato}">Stato</span>
+        </li>
+    </ul>
+
+    <br>
+    <a href="/tornei">Torna ai tornei</a>
+
+</body>
+
+</html>

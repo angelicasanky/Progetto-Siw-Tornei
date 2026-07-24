@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
 	<meta charset="UTF-8">
 	<title>Nuova Squadra</title>
 </head>
+
 <body>
 	<h1>Inserisci una nuova squadra</h1>
 
@@ -11,7 +13,7 @@
 
 		<div>
 			<label for="nome">Nome:</label>
-			<input type="text" id="nome" th:field="*{nome}" required/>
+			<input type="text" id="nome" th:field="*{nome}" required />
 		</div>
 
 		<div>
@@ -27,11 +29,9 @@
 		<div>
 			<p>Tornei a cui partecipa:</p>
 
-			<div th:each="torneo, stat : ${elencoTornei}">
-				<input type="checkbox"
-				       th:field="*{tornei}"
-				       th:value="${torneo.id}"
-				       th:text="${torneo.nome}" />
+			<div th:each="torneo : ${elencoTornei}">
+				<input type="checkbox" name="torneiIds" th:value="${torneo.id}" />
+				<span th:text="${torneo.nome}"></span>
 			</div>
 		</div>
 
@@ -42,4 +42,5 @@
 	</form>
 
 </body>
+
 </html>
