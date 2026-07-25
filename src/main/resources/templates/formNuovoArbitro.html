@@ -7,6 +7,15 @@
 </head>
 
 <body>
+    <nav>
+        <a href="/tornei">Tornei</a> |
+        <a href="/squadre">Squadre</a> |
+        <a href="/giocatori">Giocatori</a> |
+        <a href="/arbitri">Arbitri</a> |
+        <a href="/partite">Partite</a> |
+        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+    </nav>
+    <hr>
 
     <h1>Inserisci un nuovo arbitro</h1>
 

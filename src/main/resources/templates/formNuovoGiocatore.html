@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -7,10 +7,25 @@
 </head>
 
 <body>
+    <nav>
+        <a href="/tornei">Tornei</a> |
+        <a href="/squadre">Squadre</a> |
+        <a href="/giocatori">Giocatori</a> |
+        <a href="/arbitri">Arbitri</a> |
+        <a href="/partite">Partite</a> |
+        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+    </nav>
+    <hr>
 
     <h1>Inserisci un nuovo giocatore</h1>
 
-    <form th:action="@{/admin/giocatore}" th:object="${giocatore}" method="POST">
+    <!-- Il form si APRE qui -->
+    <form th:action="@{/admin/giocatore}" th:object="${giocatore}" method="POST" enctype="multipart/form-data">
+
+        <div>
+            <label>Immagine Profilo:</label>
+            <input type="file" name="fileImmagine" accept="image/*" />
+        </div>
 
         <div>
             <label for="nome">Nome:</label>
@@ -48,6 +63,7 @@
         <div>
             <button type="submit">Salva Giocatore</button>
         </div>
+
 
     </form>
 

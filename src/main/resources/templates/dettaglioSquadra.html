@@ -1,12 +1,27 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
 	<meta charset="UTF-8">
 	<title>Dettaglio Squadra</title>
 </head>
+
 <body>
+	<nav>
+		<a href="/tornei">Tornei</a> |
+		<a href="/squadre">Squadre</a> |
+		<a href="/giocatori">Giocatori</a> |
+		<a href="/arbitri">Arbitri</a> |
+		<a href="/partite">Partite</a> |
+		<a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+	</nav>
+	<hr>
 
 	<h1 th:text="${squadra.nome}">Nome squadra</h1>
+
+	<div th:if="${squadra.logo != null}">
+		<img th:src="@{'/uploads/squadre/' + ${squadra.logo}}" alt="Logo" width="200" />
+	</div>
 
 	<p><strong>Anno di fondazione:</strong> <span th:text="${squadra.annoDiFondazione}"></span></p>
 	<p><strong>Città:</strong> <span th:text="${squadra.citta}"></span></p>
@@ -16,7 +31,7 @@
 		<li th:each="torneo : ${squadra.tornei}" th:text="${torneo.nome}">Nome torneo</li>
 	</ul>
 
-	<div>
+	<div sec:authorize="hasRole('ADMIN')">
 		<a th:href="@{'/admin/squadra/delete/' + ${squadra.id}}">Elimina squadra</a>
 	</div>
 
@@ -24,4 +39,5 @@
 	<a href="/squadre">Torna all'elenco delle squadre</a>
 
 </body>
+
 </html>

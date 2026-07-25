@@ -3,6 +3,8 @@ package it.uniroma3.siw.torneo.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +26,7 @@ public class Squadra {
 	private String nome;
 	private Integer annoDiFondazione;
 	private String citta;
+	private String logo;
 
 	// Aggiungo la relazione con Torneo
 	@ManyToMany
@@ -35,6 +38,7 @@ public class Squadra {
 
 	// Aggiungo la relazione con Giocatore
 	@OneToMany(mappedBy = "squadra")
+	@JsonIgnore
 	private List<Giocatore> giocatori = new ArrayList<>();
 
 	public Squadra() {
@@ -122,6 +126,20 @@ public class Squadra {
 	 */
 	public void setGiocatori(List<Giocatore> giocatori) {
 		this.giocatori = giocatori;
+	}
+
+	/**
+	 * @return the logo
+	 */
+	public String getLogo() {
+		return logo;
+	}
+
+	/**
+	 * @param logo the logo to set
+	 */
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 }

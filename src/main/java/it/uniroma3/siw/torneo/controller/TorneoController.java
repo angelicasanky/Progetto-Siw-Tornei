@@ -1,15 +1,25 @@
 package it.uniroma3.siw.torneo.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import it.uniroma3.siw.torneo.model.Torneo;
 import it.uniroma3.siw.torneo.service.ClassificaService;
+import it.uniroma3.siw.torneo.service.PartitaService;
 import it.uniroma3.siw.torneo.service.TorneoService;
 
 @Controller
@@ -20,6 +30,9 @@ public class TorneoController {
 
 	@Autowired
 	private ClassificaService classificaService;
+
+	@Autowired
+	private PartitaService partitaService;
 
 	/**
 	 * Gestisce la richiesta Get all'indirizzo "/tornei"
@@ -59,8 +72,36 @@ public class TorneoController {
 	 *         effettuato il salvataggio
 	 */
 	@PostMapping("/admin/torneo")
-	public String salvaTorneo(@ModelAttribute("torneo") Torneo torneo, Model model) {
-		this.torneoService.salvaTorneo(torneo);
+	public String salvaTorneo(@ModelAttribute("torneo") Torneo torneo,
+			@RequestParam(value = "fileImmagine", required = false) MultipartFile fileImmagine,
+			Model model) {
+
+		try {
+			if (fileImmagine != null && !fileImmagine.isEmpty()) {
+				String fileName = StringUtils.cleanPath(fileImmagine.getOriginalFilename());
+				torneo.setImmagine(fileName);
+
+				// Salvo il torneo nel database
+				this.torneoService.salvaTorneo(torneo); // o il nome del metodo che usi nel tuo service
+
+				// Creo la cartella uploads/tornei/ se non esiste
+				String uploadDir = "uploads/tornei/";
+				Path uploadPath = Paths.get(uploadDir);
+				if (!Files.exists(uploadPath)) {
+					Files.createDirectories(uploadPath);
+				}
+
+				// Salvo il file fisicamente
+				Path filePath = uploadPath.resolve(fileName);
+				Files.copy(fileImmagine.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+			} else {
+				// Se non c'è nessuna immagine, salvo semplicemente il torneo
+				this.torneoService.salvaTorneo(torneo);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return "redirect:/tornei";
 	}
 
@@ -73,18 +114,15 @@ public class TorneoController {
 	 */
 	@GetMapping("/torneo/{id}")
 	public String getTorneo(@PathVariable("id") Long id, Model model) {
-
-		// chiedo al Service di cercare nel database il torneo con questo specifico id
 		Torneo torneo = this.torneoService.trovaPerId(id);
-
 		model.addAttribute("torneo", torneo);
-
+		model.addAttribute("partiteTorneo", this.partitaService.trovaPerTorneo(id));
 		return "dettaglioTorneo";
 	}
 
 	@GetMapping("/admin/torneo/delete/{id}")
 	public String cancellaTorneo(@PathVariable("id") Long id) {
-		this.torneoService.cancellaTorneo(id);
+		this.torneoService.eliminaTorneo(id);
 		return "redirect:/tornei";
 	}
 
@@ -94,6 +132,12 @@ public class TorneoController {
 		model.addAttribute("torneo", torneo);
 		model.addAttribute("classifica", this.classificaService.calcolaClassifica(id));
 		return "classificaTorneo";
+	}
+
+	@GetMapping("/torneo/{id}/classifica-react")
+	public String mostraClassificaReact(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("torneoId", id);
+		return "classificaReact";
 	}
 
 }

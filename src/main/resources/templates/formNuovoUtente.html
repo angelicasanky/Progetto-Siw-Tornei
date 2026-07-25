@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nuovo Utente</title>
+</head>
+
+<body>
+    <nav>
+        <a href="/tornei">Tornei</a> |
+        <a href="/squadre">Squadre</a> |
+        <a href="/giocatori">Giocatori</a> |
+        <a href="/arbitri">Arbitri</a> |
+        <a href="/partite">Partite</a> |
+        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+    </nav>
+    <hr>
+    <h1>Inserisci un nuovo utente</h1>
+    <form th:action="@{/admin/utente}" th:object="${utente}" method="POST">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" th:field="*{username}" required />
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" th:field="*{password}" required />
+        </div>
+        <div>
+            <button type="submit">Salva Utente</button>
+        </div>
+    </form>
+    <br>
+    <a href="/utenti">Torna alla lista degli utenti</a>
+</body>
+
+</html>

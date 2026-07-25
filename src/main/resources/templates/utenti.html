@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Elenco Giocatori</title>
+    <title>Elenco Utenti</title>
 </head>
 
 <body>
@@ -16,23 +16,15 @@
         <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
     </nav>
     <hr>
-
-    <h1>Tutti i Giocatori</h1>
-
-    <a th:href="@{/admin/giocatore/nuovo}" sec:authorize="hasRole('ADMIN')">Nuovo giocatore</a>
-
+    <h1>Tutti gli Utenti</h1>
+    <a th:href="@{/admin/utente/nuovo}" sec:authorize="hasRole('ADMIN')">Nuovo utente</a>
     <ul>
-        <li th:each="giocatore : ${elencoGiocatori}">
-
-            <a th:href="@{'/giocatore/' + ${giocatore.id}}"
-                th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</a> -
-            <span th:text="${giocatore.ruolo}">Ruolo</span>
+        <li th:each="utente : ${elencoUtenti}">
+            <a th:href="@{'/utente/' + ${utente.id}}" th:text="${utente.username}">Username</a> -
+            <span th:text="${utente.ruolo}">Ruolo</span>
+            <a th:href="@{'/admin/utente/delete/' + ${utente.id}}" sec:authorize="hasRole('ADMIN')">[Elimina]</a>
         </li>
     </ul>
-
-    <br>
-    <a href="/squadre">Torna alle squadre</a>
-
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,19 @@
 </head>
 
 <body>
+    <nav>
+        <a href="/tornei">Tornei</a> |
+        <a href="/squadre">Squadre</a> |
+        <a href="/giocatori">Giocatori</a> |
+        <a href="/arbitri">Arbitri</a> |
+        <a href="/partite">Partite</a> |
+        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+    </nav>
+    <hr>
 
+    <div th:if="${giocatore.foto != null}">
+        <img th:src="@{'/uploads/giocatori/' + ${giocatore.foto}}" alt="Foto" width="200" />
+    </div>
     <h1 th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</h1>
 
     <p><strong>Data di nascita:</strong> <span th:text="${giocatore.dataDiNascita}"></span></p>
@@ -18,7 +30,7 @@
             th:text="${giocatore.squadra.nome}">Nome squadra</a>
     </p>
 
-    <div>
+    <div sec:authorize="hasRole('ADMIN')">
         <a th:href="@{'/admin/giocatore/delete/' + ${giocatore.id}}">Elimina giocatore</a>
     </div>
 

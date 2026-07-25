@@ -1,5 +1,7 @@
 package it.uniroma3.siw.torneo.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +33,10 @@ public class PartitaService {
     @Transactional
     public void eliminaPartita(Long id) {
         this.partitaRepository.deleteById(id);
+    }
+
+    @Transactional
+    public List<Partita> trovaPerTorneo(Long torneoId) {
+        return this.partitaRepository.findByTorneoId(torneoId);
     }
 }

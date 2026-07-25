@@ -7,9 +7,18 @@
 </head>
 
 <body>
-	<h1>Inserisci una nuova squadra</h1>
 
-	<form th:action="@{/admin/squadra}" th:object="${squadra}" method="POST">
+	<nav>
+		<a href="/tornei">Tornei</a> |
+		<a href="/squadre">Squadre</a> |
+		<a href="/giocatori">Giocatori</a> |
+		<a href="/arbitri">Arbitri</a> |
+		<a href="/partite">Partite</a> |
+		<a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+	</nav>
+	<hr>
+	<h1>Inserisci una nuova squadra</h1>
+	<form th:action="@{/admin/squadra}" th:object="${squadra}" method="POST" enctype="multipart/form-data">
 
 		<div>
 			<label for="nome">Nome:</label>
@@ -33,6 +42,12 @@
 				<input type="checkbox" name="torneiIds" th:value="${torneo.id}" />
 				<span th:text="${torneo.nome}"></span>
 			</div>
+		</div>
+
+
+		<div>
+			<label for="fileLogo">Logo Squadra:</label>
+			<input type="file" id="fileLogo" name="fileLogo" accept="image/*" />
 		</div>
 
 		<div>

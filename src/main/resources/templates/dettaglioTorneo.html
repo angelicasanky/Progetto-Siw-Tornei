@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<meta charset="UTF-8">
@@ -8,7 +8,19 @@
 </head>
 
 <body>
+	<nav>
+		<a href="/tornei">Tornei</a> |
+		<a href="/squadre">Squadre</a> |
+		<a href="/giocatori">Giocatori</a> |
+		<a href="/arbitri">Arbitri</a> |
+		<a href="/partite">Partite</a> |
+		<a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+	</nav>
+	<hr>
 	<h1 th:text="${torneo.nome}">Nome del torneo</h1>
+	<div th:if="${torneo.immagine != null}">
+		<img th:src="@{'/uploads/tornei/' + ${torneo.immagine}}" alt="Copertina Torneo" width="300" />
+	</div>
 
 	<div>
 		<p>
@@ -21,13 +33,29 @@
 			torneo...</p>
 	</div>
 
-	<div>
+	<h2>Squadre partecipanti</h2>
+	<ul>
+		<li th:each="squadra : ${torneo.squadre}">
+			<a th:href="@{'/squadra/' + ${squadra.id}}" th:text="${squadra.nome}">Nome squadra</a>
+		</li>
+	</ul>
+
+	<h2>Calendario partite</h2>
+	<ul>
+		<li th:each="partita : ${partiteTorneo}">
+			<a th:href="@{'/partita/' + ${partita.id}}"
+				th:text="${partita.squadraCasa.nome} + ' - ' + ${partita.squadraOspite.nome} + ' (' + ${partita.dataOra} + ')'">Partita</a>
+			- <span th:text="${partita.stato}">Stato</span>
+		</li>
+	</ul>
+
+	<div sec:authorize="hasRole('ADMIN')">
 		<a th:href="@{'/admin/torneo/delete/' + ${torneo.id}}">Elimina torneo</a>
 
 	</div>
 
 	<br>
-	<a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}">Vedi classifica</a>
+	<a th:href="@{'/torneo/' + ${torneo.id} + '/classifica-react'}">Vedi classifica (React)</a>
 
 	<br>
 	<a href="/tornei">Torna all'elenco del tornei</a>

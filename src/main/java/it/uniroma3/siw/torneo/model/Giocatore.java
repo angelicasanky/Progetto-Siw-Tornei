@@ -19,6 +19,7 @@ public class Giocatore {
     private LocalDate dataDiNascita;
     private String ruolo;
     private Integer altezza;
+    private String foto;
 
     @ManyToOne
     private Squadra squadra;
@@ -122,6 +123,14 @@ public class Giocatore {
      */
     public void setSquadra(Squadra squadra) {
         this.squadra = squadra;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
 }

@@ -1,7 +1,10 @@
 package it.uniroma3.siw.torneo.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Partita {
@@ -36,6 +40,9 @@ public class Partita {
 
     @ManyToOne
     private Arbitro arbitro;
+
+    @OneToMany(mappedBy = "partita", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Commento> commenti = new ArrayList<>();
 
     public Partita() {
     }
@@ -118,6 +125,14 @@ public class Partita {
 
     public void setArbitro(Arbitro arbitro) {
         this.arbitro = arbitro;
+    }
+
+    public List<Commento> getCommenti() {
+        return commenti;
+    }
+
+    public void setCommenti(List<Commento> commenti) {
+        this.commenti = commenti;
     }
 
 }

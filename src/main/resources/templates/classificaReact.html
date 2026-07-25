@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Classifica (React)</title>
+
+    <!-- Carichiamo React, ReactDOM e Babel direttamente da CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+
+    <nav>
+        <a href="/tornei">Tornei</a> |
+        <a href="/squadre">Squadre</a> |
+        <a href="/giocatori">Giocatori</a> |
+        <a href="/arbitri">Arbitri</a> |
+        <a href="/partite">Partite</a> |
+        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+    </nav>
+    <hr>
+
+    <h1>Classifica (componente React)</h1>
+
+    <!-- React monterà il componente dentro questo div -->
+    <div id="root"></div>
+
+    <!-- passiamo l'id del torneo da Thymeleaf a JavaScript -->
+    <script th:inline="javascript">
+        const torneoId = /*[[${torneoId}]]*/ 1;
+    </script>
+
+    <!-- type="text/babel" dice a Babel di tradurre questo codice JSX in JS puro, nel browser -->
+    <script type="text/babel">
+
+        function Classifica() {
+            const [classifica, setClassifica] = React.useState([]);
+            const [caricamento, setCaricamento] = React.useState(true);
+
+            // useEffect: viene eseguito una volta sola al caricamento del componente,
+            // e fa la chiamata al backend per prendere i dati
+            React.useEffect(() => {
+                fetch(`/api/torneo/${torneoId}/classifica`)
+                    .then(response => response.json())
+                    .then(dati => {
+                        setClassifica(dati);
+                        setCaricamento(false);
+                    })
+                    .catch(errore => {
+                        console.error("Errore nel caricamento della classifica:", errore);
+                        setCaricamento(false);
+                    });
+            }, []);
+
+            if (caricamento) {
+                return <p>Caricamento in corso...</p>;
+            }
+
+            return (
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Pos.</th>
+                            <th>Squadra</th>
+                            <th>Punti</th>
+                            <th>PG</th>
+                            <th>V</th>
+                            <th>P</th>
+                            <th>S</th>
+                            <th>GF</th>
+                            <th>GS</th>
+                            <th>DR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {classifica.map((riga, indice) => (
+                            <tr key={riga.squadra.id}>
+                                <td>{indice + 1}</td>
+                                <td>{riga.squadra.nome}</td>
+                                <td>{riga.punti}</td>
+                                <td>{riga.partiteGiocate}</td>
+                                <td>{riga.vittorie}</td>
+                                <td>{riga.pareggi}</td>
+                                <td>{riga.sconfitte}</td>
+                                <td>{riga.golFatti}</td>
+                                <td>{riga.golSubiti}</td>
+                                <td>{riga.differenzaReti}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            );
+        }
+
+        // "monta" il componente React dentro il div con id="root"
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Classifica />);
+
+    </script>
+
+</body>
+
+</html>

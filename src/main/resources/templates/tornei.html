@@ -1,22 +1,30 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<html xmlns:th="http://www.thymeleaf.org"> 
 <head>
-
 	<meta charset="UTF-8">
 	<title>Elenco Tornei</title>
-
 </head>
+
 <body>
-	
+	<nav>
+		<a href="/tornei">Tornei</a> |
+		<a href="/squadre">Squadre</a> |
+		<a href="/giocatori">Giocatori</a> |
+		<a href="/arbitri">Arbitri</a> |
+		<a href="/partite">Partite</a> |
+		<a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+	</nav>
+	<hr>
+
 	<h1>Tutti i Tornei</h1>
 
+	<a th:href="@{/admin/torneo/nuovo}" sec:authorize="hasRole('ADMIN')">Nuovo torneo</a>
+
 	<ul>
-	
 		<li th:each="torneo : ${elencoTornei}">
-		
-		<a th:href="@{'/torneo/' + ${torneo.id}}" th:text="${torneo.nome}">Nome del torneo</a> -
-		<span th:text="${torneo.anno}">2026</span>
+			<a th:href="@{'/torneo/' + ${torneo.id}}" th:text="${torneo.nome}">Nome del torneo</a> -
+			<span th:text="${torneo.anno}">2026</span>
 		</li>
 	</ul>
 

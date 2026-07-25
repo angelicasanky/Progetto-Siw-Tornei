@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dettaglio Arbitro</title>
+    <title>Dettaglio Utente</title>
 </head>
 
 <body>
@@ -16,18 +16,13 @@
         <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
     </nav>
     <hr>
-
-    <h1 th:text="${arbitro.nome} + ' ' + ${arbitro.cognome}">Nome Cognome</h1>
-
-    <p><strong>Codice arbitrale:</strong> <span th:text="${arbitro.codiceArbitrale}"></span></p>
-
+    <h1 th:text="${utente.username}">Username</h1>
+    <p><strong>Ruolo:</strong> <span th:text="${utente.ruolo}"></span></p>
     <div sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{'/admin/arbitro/delete/' + ${arbitro.id}}">Elimina arbitro</a>
+        <a th:href="@{'/admin/utente/delete/' + ${utente.id}}">Elimina utente</a>
     </div>
-
     <br>
-    <a href="/arbitri">Torna all'elenco degli arbitri</a>
-
+    <a href="/utenti">Torna all'elenco degli utenti</a>
 </body>
 
 </html>

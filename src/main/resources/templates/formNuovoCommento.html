@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nuovo Commento</title>
+</head>
+
+<body>
+    <nav>
+        <a href="/tornei">Tornei</a> |
+        <a href="/squadre">Squadre</a> |
+        <a href="/giocatori">Giocatori</a> |
+        <a href="/arbitri">Arbitri</a> |
+        <a href="/partite">Partite</a> |
+        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+    </nav>
+    <hr>
+    <h1>Aggiungi un commento</h1>
+    <form th:action="@{'/partita/' + ${partitaId} + '/commento'}" th:object="${commento}" method="POST">
+        <div>
+            <label for="testo">Commento:</label>
+            <textarea id="testo" th:field="*{testo}" required></textarea>
+        </div>
+        <div>
+            <button type="submit">Salva Commento</button>
+        </div>
+    </form>
+    <br>
+    <a th:href="@{'/partita/' + ${partitaId}}">Torna alla partita</a>
+</body>
+
+</html>

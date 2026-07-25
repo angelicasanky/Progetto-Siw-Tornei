@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -7,6 +7,15 @@
 </head>
 
 <body>
+    <nav>
+        <a href="/tornei">Tornei</a> |
+        <a href="/squadre">Squadre</a> |
+        <a href="/giocatori">Giocatori</a> |
+        <a href="/arbitri">Arbitri</a> |
+        <a href="/partite">Partite</a> |
+        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+    </nav>
+    <hr>
 
     <h1 th:text="${partita.squadraCasa.nome} + ' vs ' + ${partita.squadraOspite.nome}">Casa vs Ospite</h1>
 
@@ -24,9 +33,20 @@
             th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}"></span>
     </p>
 
-    <div>
+    <div sec:authorize="hasRole('ADMIN')">
         <a th:href="@{'/admin/partita/delete/' + ${partita.id}}">Elimina partita</a>
     </div>
+
+    <br>
+    <h2>Commenti</h2>
+    <ul>
+        <li th:each="commento : ${partita.commenti}">
+            <strong th:text="${commento.utente.username}">Utente</strong>: <span
+                th:text="${commento.testo}">Testo</span>
+        </li>
+    </ul>
+    <a th:href="@{'/partita/' + ${partita.id} + '/commento/nuovo'}" sec:authorize="isAuthenticated()">Aggiungi
+        commento</a>
 
     <br>
     <a href="/partite">Torna all'elenco delle partite</a>
