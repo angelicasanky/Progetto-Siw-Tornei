@@ -4,39 +4,78 @@
 <head>
     <meta charset="UTF-8">
     <title>Dettaglio Giocatore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/dettaglio.css}" />
 </head>
 
 <body>
     <nav>
-        <a href="/tornei">Tornei</a> |
-        <a href="/squadre">Squadre</a> |
-        <a href="/giocatori">Giocatori</a> |
-        <a href="/arbitri">Arbitri</a> |
-        <a href="/partite">Partite</a> |
-        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        <div class="nav-links">
+            <a href="/tornei">Tornei</a> |
+            <a href="/squadre">Squadre</a> |
+            <a href="/giocatori">Giocatori</a> |
+            <a href="/arbitri">Arbitri</a> |
+            <a href="/partite">Partite</a> |
+            <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        </div>
+        <div>
+            <a sec:authorize="!isAuthenticated()" href="/login">Accedi</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST"
+                style="display: inline; background: none; padding: 0; border: none; box-shadow: none;">
+                <button type="submit"
+                    style="background-color: #ef4444; padding: 6px 14px; font-size: 0.9rem;">Esci</button>
+            </form>
+        </div>
     </nav>
-    <hr>
 
-    <div th:if="${giocatore.foto != null}">
-        <img th:src="@{'/uploads/giocatori/' + ${giocatore.foto}}" alt="Foto" width="200" />
+    <div class="content-wrap">
+        <div class="dettaglio-container">
+            <div class="dettaglio-header">
+                <div th:if="${giocatore.foto != null}">
+                    <img th:src="@{'/uploads/giocatori/' + ${giocatore.foto}}" alt="Foto Giocatore" />
+                </div>
+                <div>
+                    <h1 th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</h1>
+                </div>
+            </div>
+
+            <div class="dettaglio-info">
+                <p><strong>Data di nascita:</strong> <span th:text="${giocatore.dataDiNascita}"></span></p>
+                <p><strong>Ruolo:</strong> <span th:text="${giocatore.ruolo}"></span></p>
+                <p><strong>Altezza:</strong> <span th:text="${giocatore.altezza}"></span> cm</p>
+                <p><strong>Squadra:</strong>
+                    <a th:if="${giocatore.squadra != null}" th:href="@{'/squadra/' + ${giocatore.squadra.id}}"
+                        th:text="${giocatore.squadra.nome}">Nome squadra</a>
+                </p>
+            </div>
+
+            <div sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{'/admin/giocatore/edit/' + ${giocatore.id}}" style="color: var(--primary-green);">Modifica
+                    giocatore</a> |
+                <a th:href="@{'/admin/giocatore/delete/' + ${giocatore.id}}" style="color: #ef4444;">Elimina
+                    giocatore</a>
+            </div>
+
+            <div sec:authorize="hasRole('ADMIN')" style="margin-top: 20px;">
+                <a th:href="@{'/admin/giocatore/delete/' + ${giocatore.id}}" style="color: #ef4444;">Elimina
+                    giocatore</a>
+            </div>
+
+            <br>
+            <a href="/giocatori">&larr; Torna all'elenco dei giocatori</a>
+        </div>
     </div>
-    <h1 th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</h1>
 
-    <p><strong>Data di nascita:</strong> <span th:text="${giocatore.dataDiNascita}"></span></p>
-    <p><strong>Ruolo:</strong> <span th:text="${giocatore.ruolo}"></span></p>
-    <p><strong>Altezza:</strong> <span th:text="${giocatore.altezza}"></span> cm</p>
-    <p><strong>Squadra:</strong>
-        <a th:if="${giocatore.squadra != null}" th:href="@{'/squadra/' + ${giocatore.squadra.id}}"
-            th:text="${giocatore.squadra.nome}">Nome squadra</a>
-    </p>
-
-    <div sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{'/admin/giocatore/delete/' + ${giocatore.id}}">Elimina giocatore</a>
-    </div>
-
-    <br>
-    <a href="/giocatori">Torna all'elenco dei giocatori</a>
-
+    <footer>
+        <div>
+            <p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/tornei">Home</a>
+            <a href="/partite">Partite</a>
+            <a href="/squadre">Squadre</a>
+        </div>
+    </footer>
 </body>
 
 </html>

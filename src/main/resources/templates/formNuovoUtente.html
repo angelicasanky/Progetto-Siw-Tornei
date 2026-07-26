@@ -1,37 +1,62 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
     <title>Nuovo Utente</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/form.css}" />
 </head>
 
 <body>
     <nav>
-        <a href="/tornei">Tornei</a> |
-        <a href="/squadre">Squadre</a> |
-        <a href="/giocatori">Giocatori</a> |
-        <a href="/arbitri">Arbitri</a> |
-        <a href="/partite">Partite</a> |
-        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        <div class="nav-links">
+            <a href="/tornei">Tornei</a> |
+            <a href="/squadre">Squadre</a> |
+            <a href="/giocatori">Giocatori</a> |
+            <a href="/arbitri">Arbitri</a> |
+            <a href="/partite">Partite</a> |
+            <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        </div>
+        <div>
+            <a sec:authorize="!isAuthenticated()" href="/login">Accedi</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST"
+                style="display: inline; background: none; padding: 0; border: none; box-shadow: none;">
+                <button type="submit"
+                    style="background-color: #ef4444; padding: 6px 14px; font-size: 0.9rem;">Esci</button>
+            </form>
+        </div>
     </nav>
-    <hr>
-    <h1>Inserisci un nuovo utente</h1>
-    <form th:action="@{/admin/utente}" th:object="${utente}" method="POST">
+
+    <div class="content-wrap">
+        <h1>Inserisci un nuovo utente</h1>
+        <form th:action="@{/admin/utente}" th:object="${utente}" method="POST">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" th:field="*{username}" required />
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" th:field="*{password}" required />
+            </div>
+            <div>
+                <button type="submit">Salva Utente</button>
+            </div>
+        </form>
+        <br>
+        <a href="/utenti">&larr; Torna alla lista degli utenti</a>
+    </div>
+
+    <footer>
         <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" th:field="*{username}" required />
+            <p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" th:field="*{password}" required />
+        <div class="footer-links">
+            <a href="/tornei">Home</a>
+            <a href="/partite">Partite</a>
+            <a href="/squadre">Squadre</a>
         </div>
-        <div>
-            <button type="submit">Salva Utente</button>
-        </div>
-    </form>
-    <br>
-    <a href="/utenti">Torna alla lista degli utenti</a>
+    </footer>
 </body>
 
 </html>

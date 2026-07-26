@@ -1,61 +1,91 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<meta charset="UTF-8">
-	<title>Nuova Squadra</title>
+	<title th:text="${squadra.id != null ? 'Modifica Squadra' : 'Nuova Squadra'}">Gestione Squadra</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<link rel="stylesheet" th:href="@{/css/form.css}" />
 </head>
 
 <body>
-
 	<nav>
-		<a href="/tornei">Tornei</a> |
-		<a href="/squadre">Squadre</a> |
-		<a href="/giocatori">Giocatori</a> |
-		<a href="/arbitri">Arbitri</a> |
-		<a href="/partite">Partite</a> |
-		<a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+		<div class="nav-links">
+			<a href="/tornei">Tornei</a> |
+			<a href="/squadre">Squadre</a> |
+			<a href="/giocatori">Giocatori</a> |
+			<a href="/arbitri">Arbitri</a> |
+			<a href="/partite">Partite</a> |
+			<a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+		</div>
+		<div>
+			<a sec:authorize="!isAuthenticated()" href="/login">Accedi</a>
+			<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST"
+				style="display: inline; background: none; padding: 0; border: none; box-shadow: none;">
+				<button type="submit"
+					style="background-color: #ef4444; padding: 6px 14px; font-size: 0.9rem;">Esci</button>
+			</form>
+		</div>
 	</nav>
-	<hr>
-	<h1>Inserisci una nuova squadra</h1>
-	<form th:action="@{/admin/squadra}" th:object="${squadra}" method="POST" enctype="multipart/form-data">
 
-		<div>
-			<label for="nome">Nome:</label>
-			<input type="text" id="nome" th:field="*{nome}" required />
-		</div>
+	<div class="content-wrap">
+		<h1 th:text="${squadra.id != null ? 'Modifica Squadra' : 'Inserisci una nuova squadra'}">Gestione Squadra</h1>
 
-		<div>
-			<label for="annoDiFondazione">Anno di fondazione:</label>
-			<input type="number" id="annoDiFondazione" th:field="*{annoDiFondazione}" required />
-		</div>
+		<form th:action="@{${squadra.id != null ? '/admin/squadra/edit/' + squadra.id : '/admin/squadra'}}"
+			th:object="${squadra}" method="POST" enctype="multipart/form-data">
 
-		<div>
-			<label for="citta">Città:</label>
-			<input type="text" id="citta" th:field="*{citta}" required />
-		</div>
+			<input type="hidden" th:field="*{id}" />
 
-		<div>
-			<p>Tornei a cui partecipa:</p>
-
-			<div th:each="torneo : ${elencoTornei}">
-				<input type="checkbox" name="torneiIds" th:value="${torneo.id}" />
-				<span th:text="${torneo.nome}"></span>
+			<div>
+				<label for="nome">Nome:</label>
+				<input type="text" id="nome" th:field="*{nome}" required />
 			</div>
-		</div>
 
+			<div>
+				<label for="annoDiFondazione">Anno di fondazione:</label>
+				<input type="number" id="annoDiFondazione" th:field="*{annoDiFondazione}" required />
+			</div>
 
+			<div>
+				<label for="citta">Città:</label>
+				<input type="text" id="citta" th:field="*{citta}" required />
+			</div>
+
+			<div>
+				<p>Tornei a cui partecipa:</p>
+				<div th:each="torneo : ${elencoTornei}" style="margin-top: 5px;">
+					<input type="checkbox" name="torneiIds" th:value="${torneo.id}"
+						th:checked="${squadra.tornei != null and squadra.tornei.contains(torneo)}" />
+					<span th:text="${torneo.nome}"></span>
+				</div>
+			</div>
+
+			<div>
+				<label for="fileLogo">Logo Squadra:</label>
+				<input type="file" id="fileLogo" name="fileLogo" accept="image/*" />
+			</div>
+
+			<div>
+				<button type="submit"
+					th:text="${squadra.id != null ? 'Salva Modifiche' : 'Salva Squadra'}">Salva</button>
+			</div>
+
+		</form>
+
+		<br>
+		<a href="/squadre">&larr; Torna alla lista delle squadre</a>
+	</div>
+
+	<footer>
 		<div>
-			<label for="fileLogo">Logo Squadra:</label>
-			<input type="file" id="fileLogo" name="fileLogo" accept="image/*" />
+			<p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
 		</div>
-
-		<div>
-			<button type="submit">Salva Squadra</button>
+		<div class="footer-links">
+			<a href="/tornei">Home</a>
+			<a href="/partite">Partite</a>
+			<a href="/squadre">Squadre</a>
 		</div>
-
-	</form>
-
+	</footer>
 </body>
 
 </html>

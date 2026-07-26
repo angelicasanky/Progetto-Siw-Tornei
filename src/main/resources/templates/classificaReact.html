@@ -4,44 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Classifica (React)</title>
-
-    <!-- Carichiamo React, ReactDOM e Babel direttamente da CDN -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 
 <body>
-
     <nav>
-        <a href="/tornei">Tornei</a> |
-        <a href="/squadre">Squadre</a> |
-        <a href="/giocatori">Giocatori</a> |
-        <a href="/arbitri">Arbitri</a> |
-        <a href="/partite">Partite</a> |
-        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        <div class="nav-links">
+            <a href="/tornei">Tornei</a> |
+            <a href="/squadre">Squadre</a> |
+            <a href="/giocatori">Giocatori</a> |
+            <a href="/arbitri">Arbitri</a> |
+            <a href="/partite">Partite</a> |
+            <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        </div>
+        <div>
+            <a sec:authorize="!isAuthenticated()" href="/login">Accedi</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST"
+                style="display: inline; background: none; padding: 0; border: none; box-shadow: none;">
+                <button type="submit"
+                    style="background-color: #ef4444; padding: 6px 14px; font-size: 0.9rem;">Esci</button>
+            </form>
+        </div>
     </nav>
-    <hr>
 
-    <h1>Classifica (componente React)</h1>
+    <div class="content-wrap">
+        <h1>Classifica (componente React)</h1>
+        <div id="root"></div>
+    </div>
 
-    <!-- React monterà il componente dentro questo div -->
-    <div id="root"></div>
-
-    <!-- passiamo l'id del torneo da Thymeleaf a JavaScript -->
     <script th:inline="javascript">
         const torneoId = /*[[${torneoId}]]*/ 1;
     </script>
 
-    <!-- type="text/babel" dice a Babel di tradurre questo codice JSX in JS puro, nel browser -->
     <script type="text/babel">
-
         function Classifica() {
             const [classifica, setClassifica] = React.useState([]);
             const [caricamento, setCaricamento] = React.useState(true);
 
-            // useEffect: viene eseguito una volta sola al caricamento del componente,
-            // e fa la chiamata al backend per prendere i dati
             React.useEffect(() => {
                 fetch(`/api/torneo/${torneoId}/classifica`)
                     .then(response => response.json())
@@ -60,7 +62,7 @@
             }
 
             return (
-                <table border="1">
+                <table>
                     <thead>
                         <tr>
                             <th>Pos.</th>
@@ -95,12 +97,20 @@
             );
         }
 
-        // "monta" il componente React dentro il div con id="root"
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<Classifica />);
-
     </script>
 
+    <footer>
+        <div>
+            <p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/tornei">Home</a>
+            <a href="/partite">Partite</a>
+            <a href="/squadre">Squadre</a>
+        </div>
+    </footer>
 </body>
 
 </html>

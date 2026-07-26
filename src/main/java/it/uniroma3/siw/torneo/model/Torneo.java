@@ -40,6 +40,7 @@ public class Torneo {
 	private Set<Squadra> squadre = new HashSet<>();
 
 	@OneToMany(mappedBy = "torneo", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
 	private List<Partita> partite = new ArrayList<>();
 
 	/**

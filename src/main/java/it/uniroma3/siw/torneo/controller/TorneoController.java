@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import it.uniroma3.siw.torneo.model.RigaClassifica;
 import it.uniroma3.siw.torneo.model.Torneo;
 import it.uniroma3.siw.torneo.service.ClassificaService;
 import it.uniroma3.siw.torneo.service.PartitaService;
@@ -138,6 +141,23 @@ public class TorneoController {
 	public String mostraClassificaReact(@PathVariable("id") Long id, Model model) {
 		model.addAttribute("torneoId", id);
 		return "classificaReact";
+	}
+
+	@GetMapping("/admin/torneo/edit/{id}")
+	public String editTorneo(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("torneo", torneoService.trovaPerId(id));
+		return "formNuovoTorneo";
+	}
+
+	@PostMapping("/admin/torneo/edit/{id}")
+	public String updateTorneo(@PathVariable("id") Long id, @ModelAttribute("torneo") Torneo torneoDettagli) {
+		Torneo torneoEsistente = torneoService.trovaPerId(id);
+		if (torneoEsistente != null) {
+			torneoEsistente.setNome(torneoDettagli.getNome());
+			// setta gli altri campi del torneo...
+			torneoService.salvaTorneo(torneoEsistente);
+		}
+		return "redirect:/torneo/" + id;
 	}
 
 }

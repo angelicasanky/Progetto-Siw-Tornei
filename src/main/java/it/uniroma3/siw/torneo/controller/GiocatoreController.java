@@ -50,35 +50,27 @@ public class GiocatoreController {
             @RequestParam(value = "fileImmagine", required = false) MultipartFile fileImmagine,
             Model model) {
 
-        // recupero manualmente la squadra scelta e la assegno al giocatore
         if (squadraId != null) {
             Squadra squadra = this.squadraService.trovaPerId(squadraId);
             giocatore.setSquadra(squadra);
         }
 
         try {
-            // Controllo se è stata caricata un'immagine
             if (fileImmagine != null && !fileImmagine.isEmpty()) {
                 String fileName = StringUtils.cleanPath(fileImmagine.getOriginalFilename());
-
-                // Imposto il nome del file
                 giocatore.setFoto(fileName);
 
-                // Salvo il giocatore nel database
                 this.giocatoreService.salvaGiocatore(giocatore);
 
-                // Creo la cartella uploads/giocatori/ se non esiste
                 String uploadDir = "uploads/giocatori/";
                 Path uploadPath = Paths.get(uploadDir);
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
 
-                // Salvo il file fisicamente
                 Path filePath = uploadPath.resolve(fileName);
                 Files.copy(fileImmagine.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             } else {
-                // Se non c'è nessuna immagine, salvo semplicemente il giocatore
                 this.giocatoreService.salvaGiocatore(giocatore);
             }
         } catch (IOException e) {
@@ -99,5 +91,61 @@ public class GiocatoreController {
     public String cancellaGiocatore(@PathVariable("id") Long id) {
         this.giocatoreService.cancellaGiocatore(id);
         return "redirect:/giocatori";
+    }
+
+    @GetMapping("/admin/giocatore/edit/{id}")
+    public String editGiocatore(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("giocatore", giocatoreService.trovaPerId(id));
+        model.addAttribute("elencoSquadre", squadraService.trovaTutti());
+        return "formNuovoGiocatore";
+    }
+
+    @PostMapping("/admin/giocatore/edit/{id}")
+    public String updateGiocatore(@PathVariable("id") Long id,
+            @ModelAttribute("giocatore") Giocatore giocatoreDettagli,
+            @RequestParam(value = "squadraId", required = false) Long squadraId,
+            @RequestParam(value = "fileImmagine", required = false) MultipartFile fileImmagine) {
+
+        Giocatore giocatoreEsistente = giocatoreService.trovaPerId(id);
+
+        if (giocatoreEsistente != null) {
+            giocatoreEsistente.setNome(giocatoreDettagli.getNome());
+            giocatoreEsistente.setCognome(giocatoreDettagli.getCognome());
+            giocatoreEsistente.setDataDiNascita(giocatoreDettagli.getDataDiNascita());
+            giocatoreEsistente.setRuolo(giocatoreDettagli.getRuolo());
+            giocatoreEsistente.setAltezza(giocatoreDettagli.getAltezza());
+
+            // Gestione della squadra associata
+            if (squadraId != null) {
+                Squadra squadra = this.squadraService.trovaPerId(squadraId);
+                giocatoreEsistente.setSquadra(squadra);
+            } else {
+                giocatoreEsistente.setSquadra(null);
+            }
+
+            try {
+                // Se viene caricata una nuova foto, aggiorniamo il file e il nome. Altrimenti
+                // teniamo la precedente!
+                if (fileImmagine != null && !fileImmagine.isEmpty()) {
+                    String fileName = StringUtils.cleanPath(fileImmagine.getOriginalFilename());
+                    giocatoreEsistente.setFoto(fileName);
+
+                    String uploadDir = "uploads/giocatori/";
+                    Path uploadPath = Paths.get(uploadDir);
+                    if (!Files.exists(uploadPath)) {
+                        Files.createDirectories(uploadPath);
+                    }
+
+                    Path filePath = uploadPath.resolve(fileName);
+                    Files.copy(fileImmagine.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                giocatoreService.salvaGiocatore(giocatoreEsistente);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return "redirect:/giocatore/" + id;
     }
 }

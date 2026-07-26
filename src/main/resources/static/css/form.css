@@ -1,0 +1,23 @@
+/* Centratura e stile moderno per i form */
+.form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+form {
+    width: 100%;
+    max-width: 500px;
+}
+
+form input[type="file"] {
+    padding: 8px;
+    background: var(--bg-color);
+}
+
+form button[type="submit"] {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+}

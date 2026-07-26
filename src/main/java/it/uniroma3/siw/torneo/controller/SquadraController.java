@@ -44,8 +44,6 @@ public class SquadraController {
 	@GetMapping("/admin/squadra/nuova")
 	public String formNuovaSquadra(Model model) {
 		model.addAttribute("squadra", new Squadra());
-
-		// passo anche tutti i tornei esistenti, per farli scegliere nel form
 		model.addAttribute("elencoTornei", this.torneoService.trovaTutti());
 		return "formNuovaSquadra";
 	}
@@ -56,7 +54,6 @@ public class SquadraController {
 			@RequestParam(value = "fileLogo", required = false) MultipartFile fileLogo,
 			Model model) {
 
-		// recupero manualmente i tornei selezionati e li assegno alla squadra
 		if (torneiIds != null) {
 			Set<Torneo> tornei = new HashSet<>();
 			for (Long torneoId : torneiIds) {
@@ -67,30 +64,20 @@ public class SquadraController {
 		}
 
 		try {
-			// Controllo se è stato caricato un file
 			if (fileLogo != null && !fileLogo.isEmpty()) {
-				// Pulisco il nome del file per sicurezza
 				String fileName = StringUtils.cleanPath(fileLogo.getOriginalFilename());
-
-				// Imposto il nome del file nell'oggetto squadra
 				squadra.setLogo(fileName);
-
-				// Salvo la squadra nel database
 				this.squadraService.salvaSquadra(squadra);
 
-				// Definisco la cartella di destinazione e la creo se non esiste
 				String uploadDir = "uploads/squadre/";
 				Path uploadPath = Paths.get(uploadDir);
 				if (!Files.exists(uploadPath)) {
 					Files.createDirectories(uploadPath);
 				}
 
-				// Copio il file fisico nella cartella
 				Path filePath = uploadPath.resolve(fileName);
 				Files.copy(fileLogo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
 			} else {
-				// Se nessun file è stato caricato, salvo la squadra
 				this.squadraService.salvaSquadra(squadra);
 			}
 		} catch (IOException e) {
@@ -100,7 +87,6 @@ public class SquadraController {
 		return "redirect:/squadre";
 	}
 
-	// dettaglio di una singola squadra
 	@GetMapping("/squadra/{id}")
 	public String getSquadra(@PathVariable("id") Long id, Model model) {
 		Squadra squadra = this.squadraService.trovaPerId(id);
@@ -114,4 +100,68 @@ public class SquadraController {
 		return "redirect:/squadre";
 	}
 
+	@GetMapping("/admin/squadra/edit/{id}")
+	public String editSquadra(@PathVariable("id") Long id, Model model) {
+		Squadra squadra = squadraService.trovaPerId(id);
+		model.addAttribute("squadra", squadra);
+		model.addAttribute("elencoTornei", this.torneoService.trovaTutti());
+		return "formNuovaSquadra";
+	}
+
+	@PostMapping("/admin/squadra/edit/{id}")
+	public String updateSquadra(@PathVariable("id") Long id,
+			@ModelAttribute("squadra") Squadra squadraDettagli,
+			@RequestParam(value = "torneiIds", required = false) List<Long> torneiIds,
+			@RequestParam(value = "fileLogo", required = false) MultipartFile fileLogo,
+			Model model) {
+
+		Squadra squadraEsistente = squadraService.trovaPerId(id);
+
+		if (squadraEsistente != null) {
+			squadraEsistente.setNome(squadraDettagli.getNome());
+			squadraEsistente.setAnnoDiFondazione(squadraDettagli.getAnnoDiFondazione());
+			squadraEsistente.setCitta(squadraDettagli.getCitta());
+
+			// Aggiorna i tornei selezionati
+			if (torneiIds != null) {
+				Set<Torneo> tornei = new HashSet<>();
+				for (Long torneoId : torneiIds) {
+					Torneo torneo = this.torneoService.trovaPerId(torneoId);
+					tornei.add(torneo);
+				}
+				squadraEsistente.setTornei(tornei);
+			} else {
+				squadresistenteTorneiClear(squadraEsistente);
+			}
+
+			try {
+				// Se viene caricata una nuova foto, la aggiorniamo. Altrimenti teniamo la
+				// precedente!
+				if (fileLogo != null && !fileLogo.isEmpty()) {
+					String fileName = StringUtils.cleanPath(fileLogo.getOriginalFilename());
+					squadraEsistente.setLogo(fileName);
+
+					String uploadDir = "uploads/squadre/";
+					Path uploadPath = Paths.get(uploadDir);
+					if (!Files.exists(uploadPath)) {
+						Files.createDirectories(uploadPath);
+					}
+
+					Path filePath = uploadPath.resolve(fileName);
+					Files.copy(fileLogo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+				}
+
+				squadraService.salvaSquadra(squadraEsistente);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return "redirect:/squadra/" + id;
+	}
+
+	private void squadresistenteTorneiClear(Squadra s) {
+		if (s.getTornei() != null) {
+			s.getTornei().clear();
+		}
+	}
 }

@@ -1,0 +1,19 @@
+/* Stile specifico per le classifiche */
+.classifica-table th {
+    text-align: center;
+}
+
+.classifica-table td {
+    text-align: center;
+}
+
+.classifica-table td:nth-child(2) {
+    text-align: left;
+    /* Allinea il nome della squadra a sinistra */
+    font-weight: bold;
+}
+
+/* Evidenziazione posizioni (es. primo posto in verde) */
+.classifica-table tr:nth-child(1) {
+    background-color: rgba(16, 185, 129, 0.15);
+}

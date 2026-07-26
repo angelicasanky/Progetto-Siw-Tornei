@@ -4,25 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <title>Dettaglio Utente</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/dettaglio.css}" />
 </head>
 
 <body>
     <nav>
-        <a href="/tornei">Tornei</a> |
-        <a href="/squadre">Squadre</a> |
-        <a href="/giocatori">Giocatori</a> |
-        <a href="/arbitri">Arbitri</a> |
-        <a href="/partite">Partite</a> |
-        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        <div class="nav-links">
+            <a href="/tornei">Tornei</a> |
+            <a href="/squadre">Squadre</a> |
+            <a href="/giocatori">Giocatori</a> |
+            <a href="/arbitri">Arbitri</a> |
+            <a href="/partite">Partite</a> |
+            <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        </div>
+        <div>
+            <a sec:authorize="!isAuthenticated()" href="/login">Accedi</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST"
+                style="display: inline; background: none; padding: 0; border: none; box-shadow: none;">
+                <button type="submit"
+                    style="background-color: #ef4444; padding: 6px 14px; font-size: 0.9rem;">Esci</button>
+            </form>
+        </div>
     </nav>
-    <hr>
-    <h1 th:text="${utente.username}">Username</h1>
-    <p><strong>Ruolo:</strong> <span th:text="${utente.ruolo}"></span></p>
-    <div sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{'/admin/utente/delete/' + ${utente.id}}">Elimina utente</a>
+
+    <div class="content-wrap">
+        <div class="dettaglio-container">
+            <h1 th:text="${utente.username}">Username</h1>
+
+            <div class="dettaglio-info" style="margin-top: 15px;">
+                <p><strong>Ruolo:</strong> <span th:text="${utente.ruolo}"></span></p>
+            </div>
+
+            <div sec:authorize="hasRole('ADMIN')" style="margin-top: 20px;">
+                <a th:href="@{'/admin/utente/delete/' + ${utente.id}}" style="color: #ef4444;">Elimina utente</a>
+            </div>
+
+            <br>
+            <a href="/utenti">&larr; Torna all'elenco degli utenti</a>
+        </div>
     </div>
-    <br>
-    <a href="/utenti">Torna all'elenco degli utenti</a>
+
+    <footer>
+        <div>
+            <p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/tornei">Home</a>
+            <a href="/partite">Partite</a>
+            <a href="/squadre">Squadre</a>
+        </div>
+    </footer>
 </body>
 
 </html>

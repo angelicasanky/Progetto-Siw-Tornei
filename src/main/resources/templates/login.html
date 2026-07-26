@@ -4,32 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/form.css}" />
 </head>
 
 <body>
+    <div class="content-wrap"
+        style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <h1>Accedi</h1>
 
-    <h1>Accedi</h1>
+        <form th:action="@{/login}" method="POST">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required />
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required />
+            </div>
+            <div>
+                <button type="submit">Accedi</button>
+            </div>
+        </form>
 
-    <form th:action="@{/login}" method="POST">
+        <br>
         <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required />
+            <a th:href="@{/oauth2/authorization/google}">Accedi con Google</a>
         </div>
+
+        <br>
+        <a href="/registrazione">Non hai un account? Registrati</a>
+
+        <br>
+        <a href="/tornei">&larr; Torna alla home</a>
+    </div>
+
+    <footer>
         <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required />
+            <p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
         </div>
-        <div>
-            <button type="submit">Accedi</button>
+        <div class="footer-links">
+            <a href="/tornei">Home</a>
+            <a href="/partite">Partite</a>
+            <a href="/squadre">Squadre</a>
         </div>
-    </form>
-
-    <br>
-    <a href="/registrazione">Non hai un account? Registrati</a>
-
-    <br>
-    <a href="/tornei">Torna alla home</a>
-
+    </footer>
 </body>
 
 </html>

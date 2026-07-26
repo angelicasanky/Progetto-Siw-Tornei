@@ -4,40 +4,102 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Dettaglio Squadra</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<link rel="stylesheet" th:href="@{/css/dettaglio.css}" />
 </head>
 
 <body>
 	<nav>
-		<a href="/tornei">Tornei</a> |
-		<a href="/squadre">Squadre</a> |
-		<a href="/giocatori">Giocatori</a> |
-		<a href="/arbitri">Arbitri</a> |
-		<a href="/partite">Partite</a> |
-		<a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+		<div class="nav-links">
+			<a href="/tornei">Tornei</a> |
+			<a href="/squadre">Squadre</a> |
+			<a href="/giocatori">Giocatori</a> |
+			<a href="/arbitri">Arbitri</a> |
+			<a href="/partite">Partite</a> |
+			<a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+		</div>
+		<div>
+			<a sec:authorize="!isAuthenticated()" href="/login">Accedi</a>
+			<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST"
+				style="display: inline; background: none; padding: 0; border: none; box-shadow: none;">
+				<button type="submit"
+					style="background-color: #ef4444; padding: 6px 14px; font-size: 0.9rem;">Esci</button>
+			</form>
+		</div>
 	</nav>
-	<hr>
 
-	<h1 th:text="${squadra.nome}">Nome squadra</h1>
+	<div class="content-wrap">
+		<div class="dettaglio-container">
+			<div class="dettaglio-header">
+				<div th:if="${squadra.logo != null}">
+					<img th:src="@{'/uploads/squadre/' + ${squadra.logo}}" alt="Logo Squadra" />
+				</div>
+				<div>
+					<h1 th:text="${squadra.nome}">Nome squadra</h1>
+				</div>
+			</div>
 
-	<div th:if="${squadra.logo != null}">
-		<img th:src="@{'/uploads/squadre/' + ${squadra.logo}}" alt="Logo" width="200" />
+			<div class="dettaglio-info">
+				<p><strong>Anno di fondazione:</strong> <span th:text="${squadra.annoDiFondazione}"></span>
+				</p>
+				<p><strong>Città:</strong> <span th:text="${squadra.citta}"></span></p>
+
+				<p style="margin-top: 15px;"><strong>Tornei a cui partecipa:</strong></p>
+				<ul>
+					<li th:each="torneo : ${squadra.tornei}" th:text="${torneo.nome}">Nome torneo</li>
+				</ul>
+
+				<!-- ROSA DEI GIOCATORI CON FOTO E CARD -->
+				<p style="margin-top: 20px;"><strong>Rosa dei Giocatori:</strong></p>
+				<div class="cards-grid" th:if="${!squadra.giocatori.isEmpty()}">
+					<div class="sport-card" th:each="giocatore : ${squadra.giocatori}"
+						style="padding: 15px; min-width: 180px;">
+						<!-- Foto del giocatore (se presente) -->
+						<img th:if="${giocatore.foto != null}" th:src="@{'/uploads/giocatori/' + ${giocatore.foto}}"
+							alt="Foto Giocatore"
+							style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" />
+
+						<!-- Fallback se non ha la foto -->
+						<div th:if="${giocatore.foto == null}"
+							style="width: 80px; height: 80px; border-radius: 50%; background: var(--bg-color); display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 2px solid var(--primary-green); color: var(--text-muted); font-size: 0.75rem;">
+							No Foto</div>
+
+						<h3 th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}"
+							style="font-size: 0.95rem; margin-bottom: 5px;">Nome Cognome</h3>
+						<p style="font-size: 0.8rem; margin-bottom: 10px; color: var(--text-muted);"
+							th:text="${giocatore.ruolo}">Ruolo</p>
+
+						<a th:href="@{'/giocatore/' + ${giocatore.id}}"
+							style="background-color: var(--primary-green); color: white; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem;">Dettagli</a>
+					</div>
+				</div>
+
+				<p th:if="${squadra.giocatori.isEmpty()}" style="margin-top: 10px;">
+					<em>Al momento non ci sono giocatori registrati in questa squadra.</em>
+				</p>
+			</div>
+
+			<div sec:authorize="hasRole('ADMIN')" style="margin-top: 25px;">
+				<a th:href="@{'/admin/squadra/edit/' + ${squadra.id}}">Modifica squadra</a>
+				<a th:href="@{'/admin/squadra/delete/' + ${squadra.id}}" style="color: #ef4444;">Elimina
+					squadra</a>
+			</div>
+
+			<br>
+			<a href="/squadre">&larr; Torna all'elenco delle squadre</a>
+		</div>
 	</div>
 
-	<p><strong>Anno di fondazione:</strong> <span th:text="${squadra.annoDiFondazione}"></span></p>
-	<p><strong>Città:</strong> <span th:text="${squadra.citta}"></span></p>
-
-	<p><strong>Tornei a cui partecipa:</strong></p>
-	<ul>
-		<li th:each="torneo : ${squadra.tornei}" th:text="${torneo.nome}">Nome torneo</li>
-	</ul>
-
-	<div sec:authorize="hasRole('ADMIN')">
-		<a th:href="@{'/admin/squadra/delete/' + ${squadra.id}}">Elimina squadra</a>
-	</div>
-
-	<br>
-	<a href="/squadre">Torna all'elenco delle squadre</a>
-
+	<footer>
+		<div>
+			<p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
+		</div>
+		<div class="footer-links">
+			<a href="/tornei">Home</a>
+			<a href="/partite">Partite</a>
+			<a href="/squadre">Squadre</a>
+		</div>
+	</footer>
 </body>
 
 </html>

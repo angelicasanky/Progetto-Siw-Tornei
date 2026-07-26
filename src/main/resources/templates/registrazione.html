@@ -4,29 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Registrazione</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/form.css}" />
 </head>
 
 <body>
+    <div class="content-wrap"
+        style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <h1>Crea un nuovo account</h1>
 
-    <h1>Crea un nuovo account</h1>
+        <form th:action="@{/registrazione}" th:object="${utente}" method="POST">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" th:field="*{username}" required />
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" th:field="*{password}" required />
+            </div>
+            <div>
+                <button type="submit">Registrati</button>
+            </div>
+        </form>
 
-    <form th:action="@{/registrazione}" th:object="${utente}" method="POST">
+        <br>
+        <a href="/login">&larr; Hai già un account? Accedi</a>
+    </div>
+
+    <footer>
         <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" th:field="*{username}" required />
+            <p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" th:field="*{password}" required />
+        <div class="footer-links">
+            <a href="/tornei">Home</a>
+            <a href="/partite">Partite</a>
+            <a href="/squadre">Squadre</a>
         </div>
-        <div>
-            <button type="submit">Registrati</button>
-        </div>
-    </form>
-
-    <br>
-    <a href="/login">Hai già un account? Accedi</a>
-
+    </footer>
 </body>
 
 </html>

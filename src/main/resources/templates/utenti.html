@@ -4,27 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Elenco Utenti</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
 <body>
     <nav>
-        <a href="/tornei">Tornei</a> |
-        <a href="/squadre">Squadre</a> |
-        <a href="/giocatori">Giocatori</a> |
-        <a href="/arbitri">Arbitri</a> |
-        <a href="/partite">Partite</a> |
-        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        <div class="nav-links">
+            <a href="/tornei">Tornei</a> |
+            <a href="/squadre">Squadre</a> |
+            <a href="/giocatori">Giocatori</a> |
+            <a href="/arbitri">Arbitri</a> |
+            <a href="/partite">Partite</a> |
+            <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        </div>
+        <div>
+            <a sec:authorize="!isAuthenticated()" href="/login">Accedi</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST"
+                style="display: inline; background: none; padding: 0; border: none; box-shadow: none;">
+                <button type="submit"
+                    style="background-color: #ef4444; padding: 6px 14px; font-size: 0.9rem;">Esci</button>
+            </form>
+        </div>
     </nav>
-    <hr>
-    <h1>Tutti gli Utenti</h1>
-    <a th:href="@{/admin/utente/nuovo}" sec:authorize="hasRole('ADMIN')">Nuovo utente</a>
-    <ul>
-        <li th:each="utente : ${elencoUtenti}">
-            <a th:href="@{'/utente/' + ${utente.id}}" th:text="${utente.username}">Username</a> -
-            <span th:text="${utente.ruolo}">Ruolo</span>
-            <a th:href="@{'/admin/utente/delete/' + ${utente.id}}" sec:authorize="hasRole('ADMIN')">[Elimina]</a>
-        </li>
-    </ul>
+
+    <div class="content-wrap">
+        <h1>Tutti gli Utenti</h1>
+
+        <div sec:authorize="hasRole('ADMIN')" style="margin: 20px 0;">
+            <a th:href="@{/admin/utente/nuovo}" class="btn"
+                style="background-color: var(--primary-green); color: white; padding: 8px 14px; border-radius: 6px;">+
+                Nuovo utente</a>
+        </div>
+
+        <ul>
+            <li th:each="utente : ${elencoUtenti}" style="margin-bottom: 10px;">
+                <a th:href="@{'/utente/' + ${utente.id}}" th:text="${utente.username}">Username</a> -
+                <span th:text="${utente.ruolo}" style="color: var(--text-muted);">Ruolo</span>
+                <a th:href="@{'/admin/utente/delete/' + ${utente.id}}" sec:authorize="hasRole('ADMIN')"
+                    style="color: #ef4444; margin-left: 10px;">[Elimina]</a>
+            </li>
+        </ul>
+    </div>
+
+    <footer>
+        <div>
+            <p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/tornei">Home</a>
+            <a href="/partite">Partite</a>
+            <a href="/squadre">Squadre</a>
+        </div>
+    </footer>
 </body>
 
 </html>

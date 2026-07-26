@@ -29,6 +29,10 @@ public class ClassificaService {
         Map<Squadra, RigaClassifica> mappa = new HashMap<>();
 
         for (Partita partita : partiteGiocate) {
+            if (partita.getGoalsHome() == null || partita.getGoalsAway() == null) {
+                continue;
+            }
+
             Squadra casa = partita.getSquadraCasa();
             Squadra ospite = partita.getSquadraOspite();
             int golCasa = partita.getGoalsHome();

@@ -3,73 +3,100 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Nuovo Giocatore</title>
+    <title th:text="${giocatore.id != null ? 'Modifica Giocatore' : 'Nuovo Giocatore'}">Gestione Giocatore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/form.css}" />
 </head>
 
 <body>
     <nav>
-        <a href="/tornei">Tornei</a> |
-        <a href="/squadre">Squadre</a> |
-        <a href="/giocatori">Giocatori</a> |
-        <a href="/arbitri">Arbitri</a> |
-        <a href="/partite">Partite</a> |
-        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        <div class="nav-links">
+            <a href="/tornei">Tornei</a> |
+            <a href="/squadre">Squadre</a> |
+            <a href="/giocatori">Giocatori</a> |
+            <a href="/arbitri">Arbitri</a> |
+            <a href="/partite">Partite</a> |
+            <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a>
+        </div>
+        <div>
+            <a sec:authorize="!isAuthenticated()" href="/login">Accedi</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST"
+                style="display: inline; background: none; padding: 0; border: none; box-shadow: none;">
+                <button type="submit"
+                    style="background-color: #ef4444; padding: 6px 14px; font-size: 0.9rem;">Esci</button>
+            </form>
+        </div>
     </nav>
-    <hr>
 
-    <h1>Inserisci un nuovo giocatore</h1>
+    <div class="content-wrap">
+        <h1 th:text="${giocatore.id != null ? 'Modifica Giocatore' : 'Inserisci un nuovo giocatore'}">Gestione giocatore
+        </h1>
 
-    <!-- Il form si APRE qui -->
-    <form th:action="@{/admin/giocatore}" th:object="${giocatore}" method="POST" enctype="multipart/form-data">
+        <form th:action="@{${giocatore.id != null ? '/admin/giocatore/edit/' + giocatore.id : '/admin/giocatore'}}"
+            th:object="${giocatore}" method="POST" enctype="multipart/form-data">
 
+            <input type="hidden" th:field="*{id}" />
+
+            <div>
+                <label>Immagine Profilo:</label>
+                <input type="file" name="fileImmagine" accept="image/*" />
+            </div>
+
+            <div>
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" th:field="*{nome}" required />
+            </div>
+
+            <div>
+                <label for="cognome">Cognome:</label>
+                <input type="text" id="cognome" th:field="*{cognome}" required />
+            </div>
+
+            <div>
+                <label for="dataDiNascita">Data di nascita:</label>
+                <input type="date" id="dataDiNascita" th:field="*{dataDiNascita}" required />
+            </div>
+
+            <div>
+                <label for="ruolo">Ruolo:</label>
+                <input type="text" id="ruolo" th:field="*{ruolo}" required />
+            </div>
+
+            <div>
+                <label for="altezza">Altezza (cm):</label>
+                <input type="number" id="altezza" th:field="*{altezza}" required />
+            </div>
+
+            <div>
+                <label for="squadra">Squadra:</label>
+                <select id="squadra" name="squadraId">
+                    <option th:each="squadra : ${elencoSquadre}" th:value="${squadra.id}" th:text="${squadra.nome}"
+                        th:selected="${giocatore.squadra != null and giocatore.squadra.id == squadra.id}">Nome squadra
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" th:text="${giocatore.id != null ? 'Salva Modifiche' : 'Salva Giocatore'}">Salva
+                    Giocatore</button>
+            </div>
+
+        </form>
+
+        <br>
+        <a href="/giocatori">&larr; Torna alla lista dei giocatori</a>
+    </div>
+
+    <footer>
         <div>
-            <label>Immagine Profilo:</label>
-            <input type="file" name="fileImmagine" accept="image/*" />
+            <p>&copy; 2026 Gestione Torneo Calcistico. Tutti i diritti riservati.</p>
         </div>
-
-        <div>
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" th:field="*{nome}" required />
+        <div class="footer-links">
+            <a href="/tornei">Home</a>
+            <a href="/partite">Partite</a>
+            <a href="/squadre">Squadre</a>
         </div>
-
-        <div>
-            <label for="cognome">Cognome:</label>
-            <input type="text" id="cognome" th:field="*{cognome}" required />
-        </div>
-
-        <div>
-            <label for="dataDiNascita">Data di nascita:</label>
-            <input type="date" id="dataDiNascita" th:field="*{dataDiNascita}" required />
-        </div>
-
-        <div>
-            <label for="ruolo">Ruolo:</label>
-            <input type="text" id="ruolo" th:field="*{ruolo}" required />
-        </div>
-
-        <div>
-            <label for="altezza">Altezza (cm):</label>
-            <input type="number" id="altezza" th:field="*{altezza}" required />
-        </div>
-
-        <div>
-            <label for="squadra">Squadra:</label>
-            <select id="squadra" name="squadraId">
-                <option th:each="squadra : ${elencoSquadre}" th:value="${squadra.id}" th:text="${squadra.nome}">Nome
-                    squadra</option>
-            </select>
-        </div>
-
-        <div>
-            <button type="submit">Salva Giocatore</button>
-        </div>
-
-
-    </form>
-
-    <br>
-    <a href="/giocatori">Torna alla lista dei giocatori</a>
-
+    </footer>
 </body>
 
 </html>

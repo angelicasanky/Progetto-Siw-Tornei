@@ -55,9 +55,30 @@ public class CommentoController {
         return "redirect:/partita/" + partitaId;
     }
 
-    @GetMapping("/admin/commento/delete/{id}")
-    public String cancellaCommento(@PathVariable("id") Long id, @RequestParam("partitaId") Long partitaId) {
-        this.commentoService.cancellaCommento(id);
-        return "redirect:/partita/" + partitaId;
+    @GetMapping("/commento/delete/{id}")
+    public String eliminaCommento(@PathVariable("id") Long id, Principal principal,
+            org.springframework.security.core.Authentication authentication) {
+        Commento commento = commentoService.trovaPerId(id);
+
+        if (commento != null) {
+            Long partitaId = commento.getPartita().getId();
+
+            // Username dell'utente corrente
+            String usernameCorrente = principal.getName();
+
+            // Verifica se l'utente è il proprietario del commento
+            boolean isProprietario = commento.getUtente().getUsername().equals(usernameCorrente);
+
+            // Verifica se l'utente ha il ruolo ADMIN
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ADMIN"));
+
+            if (isProprietario || isAdmin) {
+                commentoService.cancellaCommento(id);
+                return "redirect:/partita/" + partitaId;
+            }
+        }
+
+        return "redirect:/tornei";
     }
 }

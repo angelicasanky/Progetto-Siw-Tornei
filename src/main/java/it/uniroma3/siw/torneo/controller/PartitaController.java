@@ -89,4 +89,39 @@ public class PartitaController {
         return "redirect:/partite";
     }
 
+    @GetMapping("/admin/partita/edit/{id}")
+    public String editPartita(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("partita", partitaService.trovaPerId(id));
+        model.addAttribute("squadre", squadraService.trovaTutti());
+
+        return "formNuovaPartita";
+    }
+
+    @PostMapping("/admin/partita/edit/{id}")
+    public String updatePartita(@PathVariable("id") Long id, @ModelAttribute("partita") Partita partitaDettagli) {
+
+        // Sostituisci "trovaPerId" con il nome effettivo del metodo nel tuo
+        // partitaService (es. findById)
+        Partita partitaEsistente = partitaService.trovaPerId(id);
+
+        if (partitaEsistente != null) {
+
+            partitaEsistente.setDataOra(partitaDettagli.getDataOra());
+            partitaEsistente.setLuogo(partitaDettagli.getLuogo());
+            partitaEsistente.setGoalsHome(partitaDettagli.getGoalsHome());
+            partitaEsistente.setGoalsAway(partitaDettagli.getGoalsAway());
+
+            partitaEsistente.setStato(partitaDettagli.getStato());
+
+            partitaEsistente.setTorneo(partitaDettagli.getTorneo());
+            partitaEsistente.setSquadraCasa(partitaDettagli.getSquadraCasa());
+            partitaEsistente.setSquadraOspite(partitaDettagli.getSquadraOspite());
+            partitaEsistente.setArbitro(partitaDettagli.getArbitro());
+
+            partitaService.salvaPartita(partitaEsistente);
+        }
+
+        return "redirect:/partita/" + id;
+    }
+
 }
