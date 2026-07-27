@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
-    <title>Nuovo Commento</title>
+    <title>Modifica Commento</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/form.css}" />
 </head>
@@ -31,14 +30,14 @@
     </nav>
 
     <div class="content-wrap">
-        <h1>Aggiungi un commento</h1>
-        <form th:action="@{'/partita/' + ${partitaId} + '/commento'}" th:object="${commento}" method="POST">
+        <h1>Modifica commento</h1>
+        <form th:action="@{'/commento/modifica/' + ${commento.id}}" method="POST">
             <div>
                 <label for="testo">Commento:</label>
-                <textarea id="testo" th:field="*{testo}" required></textarea>
+                <textarea id="testo" name="testo" required th:text="${commento.testo}"></textarea>
             </div>
             <div>
-                <button type="submit">Salva Commento</button>
+                <button type="submit">Salva modifiche</button>
             </div>
         </form>
         <br>
@@ -57,6 +56,4 @@
     </footer>
 </body>
 
-</html> modificamelo tu lui
-
-```
+</html>

@@ -68,6 +68,8 @@
                     <!-- Mostra [Elimina] SOLO se l'utente loggato è l'autore del commento O è ADMIN -->
                     <div
                         th:if="${#authorization.expression('hasRole(''ADMIN'')') or (#authentication.name == commento.utente.username)}">
+                        <a th:href="@{'/commento/modifica/' + ${commento.id}}"
+                            style="color: #3b82f6; font-size: 0.85rem;">[Modifica]</a>
                         <a th:href="@{'/commento/delete/' + ${commento.id}}" style="color: #ef4444; font-size: 0.85rem;"
                             onclick="return confirm('Sei sicuro di voler eliminare questo commento?');">[Elimina]</a>
                     </div>

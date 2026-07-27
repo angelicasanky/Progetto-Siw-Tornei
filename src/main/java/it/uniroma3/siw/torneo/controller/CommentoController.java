@@ -35,8 +35,10 @@ public class CommentoController {
      * Mostra il form per aggiungere un commento a una specifica partita.
      * Accessibile solo agli utenti autenticati.
      *
-     * @param partitaId l'identificativo della partita a cui si vuole aggiungere il commento
-     * @param model     il Model di Spring MVC usato per passare un Commento vuoto e l'ID della partita alla vista
+     * @param partitaId l'identificativo della partita a cui si vuole aggiungere il
+     *                  commento
+     * @param model     il Model di Spring MVC usato per passare un Commento vuoto e
+     *                  l'ID della partita alla vista
      * @return il nome della vista Thymeleaf "formNuovoCommento"
      */
     @GetMapping("/partita/{partitaId}/commento/nuovo")
@@ -49,13 +51,17 @@ public class CommentoController {
 
     /**
      * Gestisce la richiesta POST su "/partita/{partitaId}/commento".
-     * Salva il commento scritto dall'utente autenticato per una determinata partita.
-     * Associa automaticamente la partita e l'utente loggato all'oggetto Commento prima del salvataggio.
+     * Salva il commento scritto dall'utente autenticato per una determinata
+     * partita.
+     * Associa automaticamente la partita e l'utente loggato all'oggetto Commento
+     * prima del salvataggio.
      *
      * @param partitaId l'identificativo della partita a cui associare il commento
      * @param commento  l'oggetto Commento popolato con i dati del form
-     * @param principal l'utente attualmente autenticato, usato per ricavarne lo username
-     * @param model     il Model di Spring MVC (disponibile per eventuali estensioni)
+     * @param principal l'utente attualmente autenticato, usato per ricavarne lo
+     *                  username
+     * @param model     il Model di Spring MVC (disponibile per eventuali
+     *                  estensioni)
      * @return un redirect verso la pagina di dettaglio della partita
      */
     @PostMapping("/partita/{partitaId}/commento")
@@ -76,13 +82,17 @@ public class CommentoController {
 
     /**
      * Gestisce la richiesta GET su "/commento/delete/{id}".
-     * Elimina un commento solo se l'utente corrente è il proprietario oppure ha ruolo ADMIN.
-     * In caso di accesso non autorizzato (commento altrui e non admin), reindirizza alla lista tornei.
+     * Elimina un commento solo se l'utente corrente è il proprietario oppure ha
+     * ruolo ADMIN.
+     * In caso di accesso non autorizzato (commento altrui e non admin), reindirizza
+     * alla lista tornei.
      *
      * @param id             l'identificativo del commento da eliminare
      * @param principal      l'utente attualmente autenticato
-     * @param authentication l'oggetto di autenticazione Spring Security, usato per verificare i ruoli
-     * @return un redirect verso la partita se l'eliminazione va a buon fine, o verso la lista tornei
+     * @param authentication l'oggetto di autenticazione Spring Security, usato per
+     *                       verificare i ruoli
+     * @return un redirect verso la partita se l'eliminazione va a buon fine, o
+     *         verso la lista tornei
      */
     @GetMapping("/commento/delete/{id}")
     public String eliminaCommento(@PathVariable("id") Long id, Principal principal,
@@ -105,6 +115,68 @@ public class CommentoController {
             if (isProprietario || isAdmin) {
                 commentoService.cancellaCommento(id);
                 return "redirect:/partita/" + partitaId;
+            }
+        }
+
+        return "redirect:/tornei";
+    }
+
+    /**
+     * Gestisce la richiesta GET su "/commento/modifica/{id}".
+     * Mostra il form per modificare un commento esistente.
+     * Accessibile solo se l'utente corrente è il proprietario del commento.
+     *
+     * @param id        l'identificativo del commento da modificare
+     * @param model     il Model di Spring MVC usato per passare il Commento vuoto
+     *                  alla vista
+     * @param principal l'utente attualmente autenticato, usato per verificare i
+     *                  permessi
+     * @return il nome della vista Thymeleaf "formModificaCommento" se l'utente è il
+     *         proprietario, altrimenti un redirect verso la lista tornei
+     */
+    @GetMapping("/commento/modifica/{id}")
+    public String formModificaCommento(@PathVariable("id") Long id, Model model, Principal principal) {
+        Commento commento = commentoService.trovaPerId(id);
+
+        if (commento != null) {
+            // Verifica se l'utente corrente è il proprietario del commento
+            if (commento.getUtente().getUsername().equals(principal.getName())) {
+                model.addAttribute("commento", commento);
+                model.addAttribute("partitaId", commento.getPartita().getId());
+                return "formModificaCommento";
+            }
+        }
+
+        return "redirect:/tornei";
+    }
+
+    /**
+     * Gestisce la richiesta POST su "/commento/modifica/{id}".
+     * Salva la modifica del commento scritta dall'utente autenticato.
+     * Verifica che l'utente sia il proprietario del commento prima di salvarlo.
+     *
+     * @param id              l'identificativo del commento da modificare
+     * @param commentoDetails l'oggetto Commento popolato con i dati del form
+     * @param principal       l'utente attualmente autenticato, usato per verificare
+     *                        i
+     *                        permessi
+     * @return un redirect verso la partita se la modifica va a buon fine, o
+     *         verso la lista tornei se l'utente non è il proprietario del commento
+     */
+    @PostMapping("/commento/modifica/{id}")
+    public String salvaModificaCommento(@PathVariable("id") Long id,
+            @ModelAttribute("commento") Commento commentoDetails,
+            Principal principal) {
+        Commento commento = commentoService.trovaPerId(id);
+
+        if (commento != null) {
+            // Verifica se l'utente corrente è il proprietario del commento
+            if (commento.getUtente().getUsername().equals(principal.getName())) {
+                // Aggiorna solo i campi modificabili (testo e data)
+                commento.setTesto(commentoDetails.getTesto());
+
+                commentoService.salvaCommento(commento);
+                return "redirect:/partita/" + commento.getPartita().getId();
             }
         }
 
