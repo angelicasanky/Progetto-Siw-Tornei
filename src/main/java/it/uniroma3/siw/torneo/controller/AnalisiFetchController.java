@@ -28,6 +28,22 @@ public class AnalisiFetchController {
     @Autowired
     private SquadraRepository squadraRepository;
 
+    /**
+     * Gestisce la richiesta GET su "/admin/analisi-fetch" (solo ADMIN).
+     * Esegue un benchmark comparativo tra la strategia LAZY (default) e JOIN FETCH
+     * per il caricamento delle squadre e dei loro giocatori.
+     * <p>
+     * La strategia LAZY genera il problema N+1: una query per le squadre più
+     * una query aggiuntiva per ogni squadra ({@code 1 + N} query totali).
+     * La strategia JOIN FETCH usa un'unica query con LEFT JOIN che recupera
+     * squadre e giocatori in un colpo solo.
+     * </p>
+     * I risultati (tempi in ms e numero di query stimate) vengono passati alla vista
+     * per una visualizzazione comparativa.
+     *
+     * @param model il Model di Spring MVC usato per trasferire i dati di benchmark alla vista
+     * @return il nome della vista Thymeleaf "analisiFetch"
+     */
     @GetMapping("/admin/analisi-fetch")
     @Transactional(readOnly = true)
     public String analisi(Model model) {

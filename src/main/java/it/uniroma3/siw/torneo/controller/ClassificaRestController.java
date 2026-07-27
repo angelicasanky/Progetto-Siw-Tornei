@@ -18,6 +18,14 @@ public class ClassificaRestController {
     @Autowired
     private ClassificaService classificaService;
 
+    /**
+     * Endpoint REST GET su "/api/torneo/{id}/classifica".
+     * Calcola e restituisce la classifica del torneo specificato in formato JSON.
+     * Utilizzato dal frontend React per aggiornare la classifica in modo asincrono.
+     *
+     * @param id l'identificativo univoco del torneo di cui calcolare la classifica
+     * @return la lista di {@link RigaClassifica} serializzata automaticamente in JSON
+     */
     @GetMapping("/api/torneo/{id}/classifica")
     public List<RigaClassifica> getClassificaJson(@PathVariable("id") Long id) {
         return this.classificaService.calcolaClassifica(id);

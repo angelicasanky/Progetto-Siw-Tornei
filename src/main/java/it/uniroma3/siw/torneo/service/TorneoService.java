@@ -15,21 +15,45 @@ public class TorneoService {
 	@Autowired
 	private TorneoRepository torneoRepository;
 
+	/**
+	 * Persiste un torneo nel database (inserimento o aggiornamento).
+	 *
+	 * @param torneo l'entità Torneo da salvare
+	 * @return l'entità Torneo salvata, con l'ID generato dal database
+	 */
 	@Transactional
 	public Torneo salvaTorneo(Torneo torneo) {
 		return this.torneoRepository.save(torneo);
 	}
 
+	/**
+	 * Recupera un torneo dal database tramite il suo ID.
+	 *
+	 * @param id l'identificativo univoco del torneo
+	 * @return il torneo trovato, oppure {@code null} se non esiste
+	 */
 	@Transactional
 	public Torneo trovaPerId(Long id) {
 		return this.torneoRepository.findById(id).orElse(null);
 	}
 
+	/**
+	 * Recupera l'elenco completo di tutti i tornei presenti nel database.
+	 *
+	 * @return un {@link Iterable} contenente tutti i tornei
+	 */
 	@Transactional
 	public Iterable<Torneo> trovaTutti() {
 		return this.torneoRepository.findAll();
 	}
 
+	/**
+	 * Elimina un torneo dal database in modo sicuro:
+	 * prima rimuove il torneo dalla lista dei tornei di ogni squadra partecipante
+	 * (per mantenere la coerenza della relazione ManyToMany), poi lo cancella.
+	 *
+	 * @param id l'identificativo univoco del torneo da eliminare
+	 */
 	@Transactional
 	public void eliminaTorneo(Long id) {
 		Torneo torneo = this.torneoRepository.findById(id).orElse(null);

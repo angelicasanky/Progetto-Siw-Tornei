@@ -17,24 +17,49 @@ public class SquadraService {
 	@Autowired
 	private SquadraRepository squadraRepository;
 
+	/**
+	 * Persiste una squadra nel database (inserimento o aggiornamento).
+	 *
+	 * @param squadra l'entità Squadra da salvare
+	 * @return l'entità Squadra salvata, con l'ID generato dal database
+	 */
 	// salva per ID
 	@Transactional
 	public Squadra salvaSquadra(Squadra squadra) {
 		return this.squadraRepository.save(squadra);
 	}
 
+	/**
+	 * Recupera una squadra dal database tramite il suo ID.
+	 *
+	 * @param id l'identificativo univoco della squadra
+	 * @return la squadra trovata, oppure {@code null} se non esiste
+	 */
 	// trova per ID
 	@Transactional
 	public Squadra trovaPerId(Long id) {
 		return this.squadraRepository.findById(id).orElse(null);
 	}
 
+	/**
+	 * Recupera l'elenco completo di tutte le squadre presenti nel database.
+	 *
+	 * @return un {@link Iterable} contenente tutte le squadre
+	 */
 	// trovaTutti
 	@Transactional
 	public Iterable<Squadra> trovaTutti() {
 		return this.squadraRepository.findAll();
 	}
 
+	/**
+	 * Elimina una squadra dal database in modo sicuro:
+	 * prima scollega tutti i giocatori associati (impostando la loro squadra a {@code null}),
+	 * poi pulisce la tabella ponte dei tornei e infine cancella la squadra.
+	 * In questo modo si evitano violazioni di integrità referenziale.
+	 *
+	 * @param id l'identificativo univoco della squadra da eliminare
+	 */
 	@Transactional
 	public void eliminaSquadra(Long id) {
 		Squadra squadra = this.squadraRepository.findById(id).orElse(null);

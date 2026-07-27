@@ -21,6 +21,20 @@ public class ClassificaService {
     @Autowired
     private PartitaRepository partitaRepository;
 
+    /**
+     * Calcola la classifica di un torneo considerando solo le partite già giocate
+     * (con stato {@link StatoPartita#PLAYED}).
+     * <p>
+     * Per ogni partita vengono aggiornati vittorie, sconfitte, pareggi, gol fatti e subiti
+     * per entrambe le squadre. Il punteggio segue la regola standard:
+     * 3 punti per la vittoria, 1 per il pareggio, 0 per la sconfitta.
+     * </p>
+     * La classifica risultante è ordinata per punti decrescenti; a parità di punti
+     * viene usata la differenza reti come criterio di spareggio.
+     *
+     * @param torneoId l'identificativo univoco del torneo di cui calcolare la classifica
+     * @return la lista di {@link RigaClassifica} ordinata dalla prima all'ultima posizione
+     */
     @Transactional
     public List<RigaClassifica> calcolaClassifica(Long torneoId) {
         List<Partita> partiteGiocate = this.partitaRepository.findByTorneoIdAndStato(torneoId, StatoPartita.PLAYED);

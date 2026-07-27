@@ -33,12 +33,27 @@ public class PartitaController {
     @Autowired
     private ArbitroService arbitroService;
 
+    /**
+     * Gestisce la richiesta GET su "/partite".
+     * Recupera l'elenco di tutte le partite e lo passa alla vista.
+     *
+     * @param model il Model di Spring MVC utilizzato per trasferire i dati alla vista
+     * @return il nome della vista Thymeleaf "partite"
+     */
     @GetMapping("/partite")
     public String mostraPartite(Model model) {
         model.addAttribute("elencoPartite", this.partitaService.trovaTutte());
         return "partite";
     }
 
+    /**
+     * Gestisce la richiesta GET su "/admin/partita/nuova" (solo ADMIN).
+     * Prepara un oggetto Partita vuoto e carica le liste di tornei, squadre e arbitri
+     * necessarie per compilare il form di creazione.
+     *
+     * @param model il Model di Spring MVC utilizzato per trasferire i dati alla vista
+     * @return il nome della vista Thymeleaf "formNuovaPartita"
+     */
     @GetMapping("/admin/partita/nuova")
     public String formNuovaPartita(Model model) {
         model.addAttribute("partita", new Partita());
@@ -48,6 +63,19 @@ public class PartitaController {
         return "formNuovaPartita";
     }
 
+    /**
+     * Gestisce la richiesta POST su "/admin/partita" (solo ADMIN).
+     * Riceve i dati del form, risolve le entità associate (torneo, squadre, arbitro)
+     * tramite i rispettivi service e salva la nuova partita nel database.
+     *
+     * @param partita       l'oggetto Partita popolato con i campi base del form
+     * @param torneoId      l'ID del torneo a cui appartiene la partita (opzionale)
+     * @param squadraCasaId l'ID della squadra di casa (opzionale)
+     * @param squadraOspiteId l'ID della squadra ospite (opzionale)
+     * @param arbitroId     l'ID dell'arbitro designato (opzionale)
+     * @param model         il Model di Spring MVC (disponibile per eventuali estensioni)
+     * @return un redirect verso la lista delle partite
+     */
     @PostMapping("/admin/partita")
     public String salvaPartita(@ModelAttribute("partita") Partita partita,
             @RequestParam(value = "torneoId", required = false) Long torneoId,
@@ -76,6 +104,14 @@ public class PartitaController {
         return "redirect:/partite";
     }
 
+    /**
+     * Gestisce la richiesta GET su "/partita/{id}".
+     * Recupera il dettaglio di una singola partita tramite il suo ID e lo passa alla vista.
+     *
+     * @param id    l'identificativo univoco della partita da visualizzare
+     * @param model il Model di Spring MVC utilizzato per trasferire i dati alla vista
+     * @return il nome della vista Thymeleaf "dettaglioPartita"
+     */
     @GetMapping("/partita/{id}")
     public String getPartita(@PathVariable("id") Long id, Model model) {
         Partita partita = this.partitaService.trovaPerId(id);
@@ -83,12 +119,27 @@ public class PartitaController {
         return "dettaglioPartita";
     }
 
+    /**
+     * Gestisce la richiesta GET su "/admin/partita/delete/{id}" (solo ADMIN).
+     * Elimina la partita con l'ID specificato e reindirizza alla lista.
+     *
+     * @param id l'identificativo univoco della partita da eliminare
+     * @return un redirect verso la lista delle partite
+     */
     @GetMapping("/admin/partita/delete/{id}")
     public String cancellaPartita(@PathVariable("id") Long id) {
         this.partitaService.eliminaPartita(id);
         return "redirect:/partite";
     }
 
+    /**
+     * Gestisce la richiesta GET su "/admin/partita/edit/{id}" (solo ADMIN).
+     * Carica i dati della partita esistente e l'elenco delle squadre disponibili per prepopolare il form.
+     *
+     * @param id    l'identificativo univoco della partita da modificare
+     * @param model il Model di Spring MVC utilizzato per trasferire i dati alla vista
+     * @return il nome della vista Thymeleaf "formNuovaPartita" (riutilizzata per la modifica)
+     */
     @GetMapping("/admin/partita/edit/{id}")
     public String editPartita(@PathVariable("id") Long id, Model model) {
         model.addAttribute("partita", partitaService.trovaPerId(id));
@@ -97,6 +148,15 @@ public class PartitaController {
         return "formNuovaPartita";
     }
 
+    /**
+     * Gestisce la richiesta POST su "/admin/partita/edit/{id}" (solo ADMIN).
+     * Aggiorna i campi di una partita esistente (data, luogo, gol, stato e le entità correlate)
+     * e salva le modifiche nel database.
+     *
+     * @param id              l'identificativo univoco della partita da aggiornare
+     * @param partitaDettagli l'oggetto con i nuovi dati provenienti dal form
+     * @return un redirect verso la pagina di dettaglio della partita aggiornata
+     */
     @PostMapping("/admin/partita/edit/{id}")
     public String updatePartita(@PathVariable("id") Long id, @ModelAttribute("partita") Partita partitaDettagli) {
 

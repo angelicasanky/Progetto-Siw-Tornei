@@ -123,12 +123,29 @@ public class TorneoController {
 		return "dettaglioTorneo";
 	}
 
+	/**
+	 * Gestisce la richiesta GET su "/admin/torneo/delete/{id}" (solo ADMIN).
+	 * Elimina il torneo con l'ID specificato, scollegando prima le squadre associate,
+	 * e reindirizza alla lista dei tornei.
+	 *
+	 * @param id l'identificativo univoco del torneo da eliminare
+	 * @return un redirect verso la lista dei tornei
+	 */
 	@GetMapping("/admin/torneo/delete/{id}")
 	public String cancellaTorneo(@PathVariable("id") Long id) {
 		this.torneoService.eliminaTorneo(id);
 		return "redirect:/tornei";
 	}
 
+	/**
+	 * Gestisce la richiesta GET su "/torneo/{id}/classifica".
+	 * Calcola la classifica del torneo specificato e la visualizza nella vista Thymeleaf.
+	 * La classifica è ordinata per punti decrescenti e, a parità, per differenza reti.
+	 *
+	 * @param id    l'identificativo univoco del torneo
+	 * @param model il Model di Spring MVC utilizzato per trasferire torneo e classifica alla vista
+	 * @return il nome della vista Thymeleaf "classificaTorneo"
+	 */
 	@GetMapping("/torneo/{id}/classifica")
 	public String mostraClassifica(@PathVariable("id") Long id, Model model) {
 		Torneo torneo = this.torneoService.trovaPerId(id);
@@ -137,18 +154,44 @@ public class TorneoController {
 		return "classificaTorneo";
 	}
 
+	/**
+	 * Gestisce la richiesta GET su "/torneo/{id}/classifica-react".
+	 * Prepara la pagina che ospita il componente React per la visualizzazione dinamica
+	 * della classifica. L'ID del torneo viene passato alla pagina affinché il componente
+	 * React possa recuperare i dati tramite l'endpoint REST {@code /api/torneo/{id}/classifica}.
+	 *
+	 * @param id    l'identificativo univoco del torneo
+	 * @param model il Model di Spring MVC utilizzato per passare l'ID del torneo alla vista
+	 * @return il nome della vista Thymeleaf "classificaReact"
+	 */
 	@GetMapping("/torneo/{id}/classifica-react")
 	public String mostraClassificaReact(@PathVariable("id") Long id, Model model) {
 		model.addAttribute("torneoId", id);
 		return "classificaReact";
 	}
 
+	/**
+	 * Gestisce la richiesta GET su "/admin/torneo/edit/{id}" (solo ADMIN).
+	 * Carica i dati del torneo esistente per prepopolare il form di modifica.
+	 *
+	 * @param id    l'identificativo univoco del torneo da modificare
+	 * @param model il Model di Spring MVC utilizzato per trasferire i dati alla vista
+	 * @return il nome della vista Thymeleaf "formNuovoTorneo" (riutilizzata per la modifica)
+	 */
 	@GetMapping("/admin/torneo/edit/{id}")
 	public String editTorneo(@PathVariable("id") Long id, Model model) {
 		model.addAttribute("torneo", torneoService.trovaPerId(id));
 		return "formNuovoTorneo";
 	}
 
+	/**
+	 * Gestisce la richiesta POST su "/admin/torneo/edit/{id}" (solo ADMIN).
+	 * Aggiorna i dati del torneo esistente con quelli provenienti dal form e salva le modifiche.
+	 *
+	 * @param id              l'identificativo univoco del torneo da aggiornare
+	 * @param torneoDettagli  l'oggetto con i nuovi dati provenienti dal form
+	 * @return un redirect verso la pagina di dettaglio del torneo aggiornato
+	 */
 	@PostMapping("/admin/torneo/edit/{id}")
 	public String updateTorneo(@PathVariable("id") Long id, @ModelAttribute("torneo") Torneo torneoDettagli) {
 		Torneo torneoEsistente = torneoService.trovaPerId(id);
