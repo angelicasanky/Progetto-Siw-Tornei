@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Analisi fetch</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/analisi-fetch.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+
+<body>
+
+    <nav>
+        <a href="/tornei">Tornei</a> |
+        <a href="/squadre">Squadre</a> |
+        <a href="/giocatori">Giocatori</a> |
+        <a href="/arbitri">Arbitri</a> |
+        <a href="/partite">Partite</a> |
+        <a href="/utenti" sec:authorize="hasRole('ADMIN')">Utenti</a> |
+        <a href="/admin/analisi-fetch" sec:authorize="hasRole('ADMIN')">Analisi fetch</a>
+    </nav>
+    <hr>
+
+    <h1>Analisi sperimentale: strategie di fetch</h1>
+    <p>
+        Caso d'uso: caricamento di tutte le squadre con i rispettivi giocatori.
+        Confronto tra strategia <strong>LAZY</strong> (default) e strategia <strong>JOIN FETCH</strong>.
+        Squadre caricate: <strong th:text="${numSquadre}">0</strong>.
+    </p>
+
+    <section class="analisi-cards">
+
+        <div class="analisi-card analisi-card--lazy">
+            <h2>LAZY (default)</h2>
+            <p class="analisi-card-descrizione">
+                Carica le relazioni solo quando vengono accedute. Genera il
+                <strong>problema N+1 query</strong>: una query per le squadre, poi una
+                aggiuntiva per ogni squadra quando si accede ai giocatori.
+            </p>
+            <div class="analisi-tempo">
+                <div class="analisi-tempo-valore">
+                    <span th:text="${lazyMs}">0</span> ms
+                </div>
+                <p class="analisi-tempo-label">tempo totale</p>
+            </div>
+            <hr>
+            <ul class="analisi-lista">
+                <li>• Query SQL stimate: <strong th:text="${lazyQueryStimate}">0</strong></li>
+                <li>• Giocatori conteggiati: <strong th:text="${giocatoriContatiLazy}">0</strong></li>
+            </ul>
+        </div>
+
+        <div class="analisi-card analisi-card--join">
+            <h2>JOIN FETCH</h2>
+            <p class="analisi-card-descrizione">
+                Carica squadre e giocatori con una singola query. Elimina il problema
+                N+1: quando si accede a <code>squadra.getGiocatori()</code> il dato è
+                già in memoria, nessuna query aggiuntiva.
+            </p>
+            <div class="analisi-tempo">
+                <div class="analisi-tempo-valore">
+                    <span th:text="${joinMs}">0</span> ms
+                </div>
+                <p class="analisi-tempo-label">tempo totale</p>
+            </div>
+            <hr>
+            <ul class="analisi-lista">
+                <li>• Query SQL stimate: <strong th:text="${joinQueryStimate}">0</strong></li>
+                <li>• Giocatori conteggiati: <strong th:text="${giocatoriContatiJoin}">0</strong></li>
+            </ul>
+        </div>
+
+    </section>
+
+    <section class="analisi-grafici">
+        <div class="analisi-grafico-box">
+            <h3>Tempo di esecuzione (ms)</h3>
+            <canvas id="chartTempo" height="220"></canvas>
+        </div>
+        <div class="analisi-grafico-box">
+            <h3>Query SQL stimate</h3>
+            <canvas id="chartQuery" height="220"></canvas>
+        </div>
+    </section>
+
+    <div class="analisi-conclusioni">
+        <h2>Conclusioni</h2>
+        <p>
+            La strategia <strong>LAZY</strong> genera il problema delle <strong>N+1 query</strong>:
+            1 query per caricare tutte le squadre, più una query aggiuntiva ogni volta che si
+            accede alla lista giocatori di una squadra diversa (in totale
+            <strong th:text="${numSquadre}">N</strong> query in più).
+        </p>
+        <p>
+            La strategia <strong>JOIN FETCH</strong> risolve il problema eseguendo
+            <strong>una sola query SQL</strong> che carica squadre e giocatori insieme.
+        </p>
+        <p>
+            <strong>Quando preferire LAZY:</strong> se la relazione (giocatori) non viene
+            quasi mai consultata insieme all'elenco squadre, evitare il JOIN FETCH risparmia
+            di trasferire dati inutili nella maggior parte delle richieste.
+        </p>
+        <p class="analisi-nota">
+            Nota: la cache di primo livello di Hibernate può influenzare i tempi misurati
+            se la pagina viene ricaricata più volte nella stessa sessione.
+        </p>
+    </div>
+
+    <a href="/squadre">Torna alle squadre</a>
+
+    <script th:inline="javascript">
+        const lazyMs = /*[[${lazyMs}]]*/ 0;
+        const joinMs = /*[[${joinMs}]]*/ 0;
+        const lazyQuery = /*[[${lazyQueryStimate}]]*/ 0;
+        const joinQuery = /*[[${joinQueryStimate}]]*/ 0;
+
+        new Chart(document.getElementById('chartTempo'), {
+            type: 'bar',
+            data: {
+                labels: ['LAZY', 'JOIN FETCH'],
+                datasets: [{
+                    label: 'Tempo (ms)',
+                    data: [lazyMs, joinMs],
+                    backgroundColor: ['#e74c3c', '#27ae60']
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        new Chart(document.getElementById('chartQuery'), {
+            type: 'bar',
+            data: {
+                labels: ['LAZY', 'JOIN FETCH'],
+                datasets: [{
+                    label: 'Query SQL stimate',
+                    data: [lazyQuery, joinQuery],
+                    backgroundColor: ['#e74c3c', '#27ae60']
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

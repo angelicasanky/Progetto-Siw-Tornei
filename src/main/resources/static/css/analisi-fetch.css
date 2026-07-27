@@ -1,0 +1,94 @@
+/* ===== Layout pagina analisi ===== */
+
+.analisi-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 24px 0;
+}
+
+.analisi-card {
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.analisi-card--lazy {
+    border-left: 6px solid #e74c3c;
+}
+
+.analisi-card--join {
+    border-left: 6px solid #27ae60;
+}
+
+.analisi-card h2 {
+    margin-top: 0;
+}
+
+.analisi-card-descrizione {
+    color: #666;
+    min-height: 60px;
+}
+
+.analisi-tempo {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.analisi-tempo-valore {
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.analisi-card--lazy .analisi-tempo-valore {
+    color: #e74c3c;
+}
+
+.analisi-card--join .analisi-tempo-valore {
+    color: #27ae60;
+}
+
+.analisi-tempo-label {
+    margin: 4px 0;
+    color: #888;
+}
+
+.analisi-lista {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+}
+
+/* ===== Grafici ===== */
+
+.analisi-grafici {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 24px 0;
+}
+
+.analisi-grafico-box {
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.analisi-grafico-box h3 {
+    margin-top: 0;
+    text-align: center;
+}
+
+/* ===== Conclusioni ===== */
+
+.analisi-conclusioni {
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.analisi-nota {
+    color: gray;
+    font-size: 14px;
+}
