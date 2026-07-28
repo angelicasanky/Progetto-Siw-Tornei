@@ -86,6 +86,10 @@ public class CommentoController {
      * ruolo ADMIN.
      * In caso di accesso non autorizzato (commento altrui e non admin), reindirizza
      * alla lista tornei.
+     * 
+     * @PathVariable estrae un parametro dall'url. Per esempio, se l'url è
+     *               "/commento/delete/1", @PathVariable("id") estrae il valore
+     *               1 e lo assegna alla variabile id.
      *
      * @param id             l'identificativo del commento da eliminare
      * @param principal      l'utente attualmente autenticato
