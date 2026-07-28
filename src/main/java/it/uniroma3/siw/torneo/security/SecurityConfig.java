@@ -1,5 +1,6 @@
 package it.uniroma3.siw.torneo.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +12,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+        @Autowired
+        private CustomOAuth2UserService customOAuth2UserService;
 
         /**
          * Registra un {@link PasswordEncoder} basato su BCrypt nel contesto Spring.
@@ -41,6 +45,8 @@ public class SecurityConfig {
          * </ul>
          * Vengono abilitati sia il login tramite form che il login OAuth2 (es. Google),
          * entrambi con redirect su {@code /tornei} dopo il successo.
+         * Il login OAuth2 usa {@link CustomOAuth2UserService} per collegare
+         * automaticamente l'utente Google a un'entità {@code Utente} del database.
          * Il logout reindirizza anch'esso su {@code /tornei}.
          * </p>
          *
@@ -69,6 +75,8 @@ public class SecurityConfig {
                                 // AGGIUNTO IL BLOCCO PER IL LOGIN CON GOOGLE:
                                 .oauth2Login(oauth2 -> oauth2
                                                 .loginPage("/login")
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .userService(customOAuth2UserService))
                                                 .defaultSuccessUrl("/tornei", true))
                                 .logout(logout -> logout
                                                 .logoutSuccessUrl("/tornei")
